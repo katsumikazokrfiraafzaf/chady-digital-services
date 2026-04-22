@@ -1,1028 +1,2427 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chady Digital Services</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0b0f1a; --surface: #131929; --surface2: #1a2235;
-    --accent: #00d4ff; --accent2: #7c3aed; --gold: #f59e0b;
-    --text: #e8edf5; --muted: #8899b0; --white: #ffffff; --green: #22c55e;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg); color: var(--text);
-    overflow-x: hidden; transition: opacity .22s ease;
-  }
-  body.lang-ar { font-family: 'Cairo', sans-serif; }
-  body.fading   { opacity: 0; }
-
-  /* ── LANG SWITCHER ── */
-  .lang-switcher {
-    display: flex; align-items: center; gap: 4px;
-    background: rgba(0,212,255,0.07);
-    border: 1px solid rgba(0,212,255,0.18);
-    border-radius: 50px; padding: 4px 5px;
-  }
-  .lang-btn {
-    padding: 5px 14px; border-radius: 50px; border: none;
-    background: transparent; color: var(--muted);
-    font-size: .8rem; font-weight: 700; cursor: pointer;
-    letter-spacing: .04em; transition: background .2s, color .2s;
-    font-family: inherit;
-  }
-  .lang-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
-  .lang-btn:not(.active):hover { color: var(--accent); }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 5%; background: rgba(11,15,26,0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(0,212,255,0.08); transition: all .3s;
-  }
-  .nav-right { display: flex; align-items: center; gap: 14px; }
-  .logo {
-    font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -.5px;
-  }
-  .logo span { -webkit-text-fill-color: var(--accent); }
-  nav ul { display: flex; gap: 2rem; list-style: none; }
-  nav a { font-size: .9rem; font-weight: 500; color: var(--muted); text-decoration: none; letter-spacing: .03em; transition: color .25s; }
-  nav a:hover { color: var(--accent); }
-  .nav-cta { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--white) !important; padding: 8px 20px; border-radius: 50px; font-weight: 600 !important; transition: opacity .25s !important; }
-  .nav-cta:hover { opacity: .85; }
-
-  /* Hamburger */
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-  .hamburger span { width: 25px; height: 2px; background: var(--text); border-radius: 2px; transition: all .3s; }
-  .mobile-menu {
-    display: none; position: fixed; top: 65px; left: 0; right: 0;
-    background: rgba(11,15,26,0.98); backdrop-filter: blur(20px);
-    padding: 1.5rem 5%; border-bottom: 1px solid rgba(0,212,255,0.1); z-index: 99;
-  }
-  .mobile-menu.open { display: block; }
-  .mobile-menu a {
-    display: block; padding: 12px 0; font-size: 1.05rem;
-    color: var(--muted); text-decoration: none; font-weight: 500;
-    border-bottom: 1px solid rgba(255,255,255,0.05); transition: color .2s;
-  }
-  .mobile-menu a:hover { color: var(--accent); }
-  .mobile-lang { display: flex; gap: 10px; padding: 14px 0; }
-
-  /* ── HERO ── */
-  #home {
-    min-height: 100vh; display: flex; align-items: center;
-    padding: 120px 5% 80px; position: relative; overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute; inset: 0; z-index: 0;
-    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(124,58,237,0.12) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 50% at 20% 80%, rgba(0,212,255,0.08) 0%, transparent 60%);
-  }
-  .grid-overlay {
-    position: absolute; inset: 0;
-    background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-  .hero-content { position: relative; z-index: 1; max-width: 650px; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
-    color: var(--accent); padding: 6px 16px; border-radius: 50px;
-    font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 24px;
-  }
-  .badge::before { content: '●'; font-size: .5rem; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
-    font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1.5px;
-  }
-  body.lang-ar h1 { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
-  h1 .highlight {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .tagline { font-size: 1rem; color: var(--accent); font-weight: 600; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 16px; }
-  .tagline span { margin: 0 8px; opacity: .4; }
-  .hero-desc { font-size: 1.05rem; color: var(--muted); line-height: 1.75; margin-bottom: 36px; max-width: 520px; }
-  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: linear-gradient(135deg, #00d4ff, #7c3aed); color: #fff;
-    padding: 14px 30px; border-radius: 50px; font-weight: 600; font-size: .95rem; text-decoration: none;
-    box-shadow: 0 8px 32px rgba(0,212,255,0.25); transition: transform .2s, box-shadow .2s;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,212,255,0.35); }
-  .btn-outline {
-    display: inline-flex; align-items: center; gap: 10px;
-    border: 1px solid rgba(0,212,255,0.3); color: var(--accent);
-    padding: 14px 30px; border-radius: 50px; font-weight: 600; font-size: .95rem; text-decoration: none;
-    transition: background .2s, transform .2s;
-  }
-  .btn-outline:hover { background: rgba(0,212,255,0.06); transform: translateY(-2px); }
-  .hero-stats { display: flex; gap: 40px; margin-top: 56px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; }
-  .stat-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--white); }
-  .stat-num span { color: var(--accent); }
-  .stat-label { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
-
-  /* ── SECTIONS ── */
-  section { padding: 100px 5%; }
-  .section-label { font-size: .75rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: block; }
-  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
-  body.lang-ar .section-title { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
-  .section-sub { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 520px; }
-  .section-header { margin-bottom: 60px; }
-
-  /* ── SERVICES ── */
-  #services { background: var(--surface); }
-  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 24px; }
-  .service-card {
-    background: var(--bg); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
-    transition: transform .3s, border-color .3s, box-shadow .3s; cursor: default;
-  }
-  .service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: 0; transition: opacity .3s; }
-  .service-card:hover { transform: translateY(-6px); border-color: rgba(0,212,255,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-  .service-card:hover::before { opacity: 1; }
-  .card-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 20px; }
-  .icon-cyan   { background: rgba(0,212,255,0.1); }
-  .icon-purple { background: rgba(124,58,237,0.12); }
-  .icon-green  { background: rgba(34,197,94,0.1); }
-  .icon-gold   { background: rgba(245,158,11,0.1); }
-  .icon-pink   { background: rgba(236,72,153,0.1); }
-  .icon-orange { background: rgba(249,115,22,0.1); }
-  .card-title  { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
-  body.lang-ar .card-title { font-family: 'Cairo', sans-serif; }
-  .card-desc   { color: var(--muted); font-size: .9rem; line-height: 1.65; margin-bottom: 20px; }
-  .card-tags   { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-  .tag { font-size: .72rem; font-weight: 600; letter-spacing: .05em; padding: 4px 10px; border-radius: 50px; background: rgba(0,212,255,0.08); color: var(--accent); border: 1px solid rgba(0,212,255,0.15); }
-  .tag-purple { background: rgba(124,58,237,0.1); color: #a78bfa; border-color: rgba(124,58,237,0.2); }
-  .tag-pink   { background: rgba(236,72,153,0.1); color: #f472b6; border-color: rgba(236,72,153,0.2); }
-  .tag-orange { background: rgba(249,115,22,0.1); color: #fb923c; border-color: rgba(249,115,22,0.2); }
-  .card-price { display: flex; align-items: baseline; gap: 4px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
-  .price-num  { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--white); }
-  .price-unit { font-size: .8rem; color: var(--muted); }
-  .card-list  { list-style: none; margin-bottom: 20px; }
-  .card-list li { color: var(--muted); font-size: .9rem; padding: 5px 0 5px 18px; position: relative; line-height: 1.5; }
-  .card-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: .75rem; top: 6px; }
-  html[dir="rtl"] .card-list li { padding: 5px 18px 5px 0; }
-  html[dir="rtl"] .card-list li::before { left: auto; right: 0; content: '←'; }
-
-  /* ── PORTFOLIO ── */
-  .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-  .portfolio-item {
-    border-radius: 16px; overflow: hidden; position: relative; aspect-ratio: 16/10;
-    background: var(--surface2); border: 1px solid rgba(255,255,255,0.06);
-    display: flex; align-items: center; justify-content: center;
-    transition: transform .3s, box-shadow .3s; cursor: pointer;
-  }
-  .portfolio-item:hover { transform: scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-  .portfolio-placeholder { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--muted); text-align: center; padding: 20px; }
-  .portfolio-placeholder .p-icon { font-size: 2.5rem; }
-  .portfolio-placeholder .p-label { font-size: .85rem; font-weight: 500; }
-  .portfolio-item .overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%); opacity: 0; transition: opacity .3s; display: flex; align-items: flex-end; padding: 20px; }
-  .portfolio-item:hover .overlay { opacity: 1; }
-  .overlay-text { color: #fff; font-size: .85rem; font-weight: 500; }
-  .portfolio-upload-hint { margin-top: 40px; text-align: center; padding: 28px; border-radius: 16px; border: 2px dashed rgba(0,212,255,0.15); color: var(--muted); font-size: .9rem; }
-  .portfolio-upload-hint strong { color: var(--accent); }
-
-  /* ── REVIEWS ── */
-  #reviews { background: var(--surface); }
-  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
-  .review-card { background: var(--bg); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; transition: transform .3s, border-color .3s; }
-  .review-card:hover { transform: translateY(-4px); border-color: rgba(245,158,11,0.2); }
-  .stars { color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 16px; }
-  .review-text { color: var(--muted); font-size: .95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic; }
-  .reviewer { display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
-  .reviewer-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: .85rem; color: #fff; flex-shrink: 0; }
-  .reviewer-name { font-weight: 600; font-size: .9rem; color: var(--text); }
-  .reviewer-sub  { font-size: .75rem; color: var(--muted); }
-
-  /* ── CONTACT ── */
-  #contact { text-align: center; background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(124,58,237,0.1) 0%, transparent 70%); }
-  .contact-inner { max-width: 560px; margin: 0 auto; }
-  .contact-inner .section-sub { margin: 0 auto 48px; }
-  .whatsapp-btn {
-    display: inline-flex; align-items: center; gap: 14px;
-    background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; text-decoration: none;
-    padding: 18px 40px; border-radius: 60px; font-size: 1.1rem; font-weight: 700;
-    box-shadow: 0 10px 40px rgba(37,211,102,0.3); transition: transform .25s, box-shadow .25s; letter-spacing: .01em;
-  }
-  .whatsapp-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 50px rgba(37,211,102,0.4); }
-  .whatsapp-btn svg { width: 28px; height: 28px; flex-shrink: 0; }
-  .contact-info { margin-top: 32px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .contact-chip { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid rgba(255,255,255,0.07); padding: 10px 20px; border-radius: 50px; font-size: .85rem; color: var(--muted); }
-
-  /* ── RATE US SECTION ── */
-  #rate-us { background: var(--bg); }
-  .rateus-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-  @media(max-width:860px){ .rateus-layout { grid-template-columns: 1fr; } }
-
-  /* Form */
-  .rateus-form-wrap {
-    background: var(--surface); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 24px; padding: 36px;
-  }
-  .form-group { margin-bottom: 22px; }
-  .form-label {
-    display: block; font-size: .8rem; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 10px;
-  }
-  .form-input {
-    width: 100%; background: var(--surface2);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px; padding: 12px 16px;
-    color: var(--text); font-family: inherit; font-size: .95rem;
-    outline: none; transition: border-color .2s, box-shadow .2s;
-  }
-  .form-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
-  }
-  textarea.form-input { resize: vertical; min-height: 110px; }
-
-  /* Interactive star picker */
-  .star-picker { display: flex; gap: 8px; flex-direction: row-reverse; justify-content: flex-end; }
-  html[dir="rtl"] .star-picker { flex-direction: row; justify-content: flex-end; }
-  .star-picker input { display: none; }
-  .star-picker label {
-    font-size: 2rem; cursor: pointer; color: rgba(255,255,255,0.15);
-    transition: color .15s, transform .15s;
-    user-select: none;
-  }
-  .star-picker label:hover,
-  .star-picker label:hover ~ label,
-  .star-picker input:checked ~ label { color: var(--gold); }
-  .star-picker label:hover { transform: scale(1.2); }
-
-  /* Submit button */
-  .btn-submit {
-    width: 100%; padding: 14px; border: none; border-radius: 50px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; font-family: inherit; font-size: 1rem; font-weight: 700;
-    cursor: pointer; transition: transform .2s, box-shadow .2s;
-    box-shadow: 0 6px 24px rgba(0,212,255,0.2);
-    letter-spacing: .02em;
-  }
-  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,212,255,0.3); }
-  .btn-submit:active { transform: scale(.98); }
-
-  /* Success toast */
-  .submit-toast {
-    display: none; align-items: center; gap: 10px;
-    background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25);
-    color: #4ade80; border-radius: 12px; padding: 14px 18px;
-    font-size: .9rem; font-weight: 600; margin-top: 16px;
-  }
-  .submit-toast.show { display: flex; animation: slideIn .4s ease; }
-  @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-
-  /* Summary bar */
-  .rateus-summary {
-    background: var(--surface); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 20px; padding: 28px; margin-bottom: 24px;
-    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
-  }
-  .summary-score {
-    font-family: 'Syne', sans-serif; font-size: 3.5rem; font-weight: 800;
-    color: var(--white); line-height: 1;
-  }
-  .summary-stars { color: var(--gold); font-size: 1.1rem; letter-spacing: 2px; }
-  .summary-count { font-size: .8rem; color: var(--muted); margin-top: 4px; }
-  .summary-bars { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 6px; }
-  .bar-row { display: flex; align-items: center; gap: 8px; font-size: .75rem; color: var(--muted); }
-  .bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
-  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 10px; transition: width .5s ease; }
-
-  /* Submitted reviews grid */
-  .user-reviews-grid {
-    display: grid; grid-template-columns: 1fr;
-    gap: 14px; max-height: 420px; overflow-y: auto;
-    padding-right: 4px;
-  }
-  .user-reviews-grid::-webkit-scrollbar { width: 4px; }
-  .user-reviews-grid::-webkit-scrollbar-track { background: transparent; }
-  .user-reviews-grid::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 4px; }
-  .user-review-card {
-    background: var(--surface); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 16px; padding: 18px 20px;
-    animation: slideIn .4s ease;
-  }
-  .user-review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
-  .user-review-name { font-weight: 700; font-size: .9rem; color: var(--text); }
-  .user-review-stars { color: var(--gold); font-size: .85rem; letter-spacing: 1px; }
-  .user-review-text { color: var(--muted); font-size: .88rem; line-height: 1.6; }
-  .user-review-date { font-size: .72rem; color: rgba(136,153,176,0.6); margin-top: 8px; }
-  .no-reviews-msg { text-align: center; color: var(--muted); font-size: .9rem; padding: 40px 20px; opacity: .6; }
-
-  /* ── FOOTER ── */
-  footer { background: var(--surface); border-top: 1px solid rgba(255,255,255,0.05); padding: 40px 5%; text-align: center; }
-  .footer-logo { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
-  footer p { color: var(--muted); font-size: .85rem; }
-
-  /* ── FADE-UP ── */
-  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
-
-  /* ── RTL ── */
-  html[dir="rtl"] .hero-content { text-align: right; }
-  html[dir="rtl"] .section-header { text-align: right; }
-  html[dir="rtl"] nav ul { flex-direction: row-reverse; }
-  html[dir="rtl"] .hero-btns { flex-direction: row-reverse; }
-  html[dir="rtl"] .hero-stats { flex-direction: row-reverse; }
-  html[dir="rtl"] .reviewer { flex-direction: row-reverse; }
-  html[dir="rtl"] .reviewer > div:last-child { text-align: right; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    nav ul { display: none; }
-    .hamburger { display: flex; }
-    .hero-btns { flex-direction: column; align-items: flex-start; }
-    html[dir="rtl"] .hero-btns { align-items: flex-end; }
-    .hero-stats { gap: 24px; }
-    section { padding: 70px 5%; }
-  }
-</style>
-</head>
-<body class="lang-fr">
-
-<!-- NAV -->
-<nav id="navbar">
-  <div class="logo">Chady<span>.</span>Digital</div>
-  <ul>
-    <li><a href="#home"      data-i18n="nav_home"></a></li>
-    <li><a href="#services"  data-i18n="nav_services"></a></li>
-    <li><a href="#portfolio" data-i18n="nav_portfolio"></a></li>
-    <li><a href="#reviews"   data-i18n="nav_reviews"></a></li>
-    <li><a href="#rate-us"   data-i18n="nav_rateus"></a></li>
-    <li><a href="#contact"   class="nav-cta" data-i18n="nav_contact"></a></li>
-  </ul>
-  <div class="nav-right">
-    <div class="lang-switcher">
-      <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">FR</button>
-      <button class="lang-btn"        id="btn-ar" onclick="setLang('ar')">AR</button>
-    </div>
-    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </div>
-  </div>
-</nav>
-
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#home"      onclick="closeMenu()" data-i18n="nav_home"></a>
-  <a href="#services"  onclick="closeMenu()" data-i18n="nav_services"></a>
-  <a href="#portfolio" onclick="closeMenu()" data-i18n="nav_portfolio"></a>
-  <a href="#reviews"   onclick="closeMenu()" data-i18n="nav_reviews"></a>
-  <a href="#rate-us"   onclick="closeMenu()" data-i18n="nav_rateus"></a>
-  <a href="#contact"   onclick="closeMenu()" data-i18n="nav_contact"></a>
-  <div class="mobile-lang">
-    <button class="lang-btn" onclick="setLang('fr');closeMenu()">🇫🇷 Français</button>
-    <button class="lang-btn" onclick="setLang('ar');closeMenu()">🇲🇦 العربية</button>
-  </div>
-</div>
-
-<!-- HERO -->
-<section id="home">
-  <div class="hero-bg"></div>
-  <div class="grid-overlay"></div>
-  <div class="hero-content">
-    <div class="badge" data-i18n="hero_badge"></div>
-    <div class="tagline">
-      <span data-i18n="tag1"></span>
-      <span style="margin:0 8px;opacity:.4">•</span>
-      <span data-i18n="tag2"></span>
-      <span style="margin:0 8px;opacity:.4">•</span>
-      <span data-i18n="tag3"></span>
-    </div>
-    <h1>
-      <span data-i18n="hero_title_1"></span>
-      <span class="highlight"> Chady Digital </span>
-      <span data-i18n="hero_title_2"></span>
-    </h1>
-    <p class="hero-desc" data-i18n="hero_desc"></p>
-    <div class="hero-btns">
-      <a href="#services" class="btn-primary"><span data-i18n="hero_btn1"></span> →</a>
-      <a href="https://wa.me/212636483530" target="_blank" class="btn-outline">💬 <span data-i18n="hero_btn2"></span></a>
-    </div>
-    <div class="hero-stats">
-      <div>
-        <div class="stat-num">100<span>%</span></div>
-        <div class="stat-label" data-i18n="stat1"></div>
-      </div>
-      <div>
-        <div class="stat-num">$5<span>+</span></div>
-        <div class="stat-label" data-i18n="stat2"></div>
-      </div>
-      <div>
-        <div class="stat-num">24<span>h</span></div>
-        <div class="stat-label" data-i18n="stat3"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SERVICES -->
-<section id="services">
-  <div class="section-header fade-up">
-    <span class="section-label" data-i18n="srv_label"></span>
-    <h2 class="section-title" data-i18n="srv_title"></h2>
-    <p class="section-sub" data-i18n="srv_sub"></p>
-  </div>
-  <div class="services-grid">
-
-    <div class="service-card fade-up">
-      <div class="card-icon icon-cyan">🎬</div>
-      <div class="card-title" data-i18n="s1_title"></div>
-      <div class="card-desc"  data-i18n="s1_desc"></div>
-      <div class="card-tags">
-        <span class="tag">YouTube</span><span class="tag">TikTok</span>
-        <span class="tag">Instagram</span><span class="tag">Reels</span>
-      </div>
-      <div class="card-price">
-        <div class="price-num">$5</div>
-        <div class="price-unit" data-i18n="s1_unit"></div>
-      </div>
-    </div>
-
-    <div class="service-card fade-up">
-      <div class="card-icon icon-purple">🎥</div>
-      <div class="card-title" data-i18n="s2_title"></div>
-      <div class="card-desc"  data-i18n="s2_desc"></div>
-      <div class="card-tags">
-        <span class="tag tag-purple" data-i18n="s2_t1"></span>
-        <span class="tag tag-purple" data-i18n="s2_t2"></span>
-        <span class="tag tag-purple" data-i18n="s2_t3"></span>
-      </div>
-      <div class="card-price">
-        <div class="price-num">$30</div>
-        <div class="price-unit" data-i18n="s2_unit"></div>
-      </div>
-    </div>
-
-    <div class="service-card fade-up">
-      <div class="card-icon icon-green">🖼️</div>
-      <div class="card-title" data-i18n="s3_title"></div>
-      <div class="card-desc"  data-i18n="s3_desc"></div>
-      <div class="card-tags">
-        <span class="tag" data-i18n="s3_t1"></span>
-        <span class="tag" data-i18n="s3_t2"></span>
-        <span class="tag" data-i18n="s3_t3"></span>
-      </div>
-      <div class="card-price">
-        <div class="price-num">$5</div>
-        <div class="price-unit" data-i18n="s3_unit"></div>
-      </div>
-    </div>
-
-    <div class="service-card fade-up">
-      <div class="card-icon icon-pink">🎵</div>
-      <div class="card-title" data-i18n="s4_title"></div>
-      <div class="card-desc"  data-i18n="s4_desc"></div>
-      <div class="card-tags">
-        <span class="tag tag-pink" data-i18n="s4_t1"></span>
-        <span class="tag tag-pink" data-i18n="s4_t2"></span>
-        <span class="tag tag-pink" data-i18n="s4_t3"></span>
-        <span class="tag tag-pink" data-i18n="s4_t4"></span>
-      </div>
-      <div class="card-price">
-        <div class="price-num">$25</div>
-        <div class="price-unit" data-i18n="s4_unit"></div>
-      </div>
-    </div>
-
-    <div class="service-card fade-up">
-      <div class="card-icon icon-orange">📢</div>
-      <div class="card-title" data-i18n="s5_title"></div>
-      <div class="card-desc"  data-i18n="s5_desc"></div>
-      <div class="card-tags">
-        <span class="tag tag-orange">Facebook</span>
-        <span class="tag tag-orange">Instagram</span>
-        <span class="tag tag-orange" data-i18n="s5_t3"></span>
-        <span class="tag tag-orange" data-i18n="s5_t4"></span>
-      </div>
-      <div class="card-price">
-        <div class="price-num" style="font-size:1.1rem;color:var(--gold)" data-i18n="s5_price"></div>
-      </div>
-    </div>
-
-    <div class="service-card fade-up">
-      <div class="card-icon icon-gold">⚡</div>
-      <div class="card-title" data-i18n="s6_title"></div>
-      <div class="card-desc"  data-i18n="s6_desc"></div>
-      <ul class="card-list">
-        <li data-i18n="s6_li1"></li>
-        <li data-i18n="s6_li2"></li>
-        <li data-i18n="s6_li3"></li>
-        <li data-i18n="s6_li4"></li>
-      </ul>
-      <div class="card-price">
-        <div class="price-num" style="font-size:1.1rem;color:var(--gold)" data-i18n="s6_price"></div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- PORTFOLIO -->
-<section id="portfolio">
-  <div class="section-header fade-up">
-    <span class="section-label" data-i18n="port_label"></span>
-    <h2 class="section-title" data-i18n="port_title"></h2>
-    <p class="section-sub" data-i18n="port_sub"></p>
-  </div>
-  <div class="portfolio-grid">
-    <div class="portfolio-item fade-up">
-      <div class="portfolio-placeholder"><div class="p-icon">🎬</div><div class="p-label" data-i18n="p1"></div></div>
-      <div class="overlay"><div class="overlay-text" data-i18n="p1_o"></div></div>
-    </div>
-    <div class="portfolio-item fade-up">
-      <div class="portfolio-placeholder"><div class="p-icon">📱</div><div class="p-label" data-i18n="p2"></div></div>
-      <div class="overlay"><div class="overlay-text" data-i18n="p2_o"></div></div>
-    </div>
-    <div class="portfolio-item fade-up">
-      <div class="portfolio-placeholder"><div class="p-icon">🖼️</div><div class="p-label" data-i18n="p3"></div></div>
-      <div class="overlay"><div class="overlay-text" data-i18n="p3_o"></div></div>
-    </div>
-    <div class="portfolio-item fade-up">
-      <div class="portfolio-placeholder"><div class="p-icon">🎥</div><div class="p-label" data-i18n="p4"></div></div>
-      <div class="overlay"><div class="overlay-text" data-i18n="p4_o"></div></div>
-    </div>
-    <div class="portfolio-item fade-up">
-      <div class="portfolio-placeholder"><div class="p-icon">✨</div><div class="p-label" data-i18n="p5"></div></div>
-      <div class="overlay"><div class="overlay-text" data-i18n="p5_o"></div></div>
-    </div>
-    <div class="portfolio-item fade-up">
-      <div class="portfolio-placeholder"><div class="p-icon">🏆</div><div class="p-label" data-i18n="p6"></div></div>
-      <div class="overlay"><div class="overlay-text" data-i18n="p6_o"></div></div>
-    </div>
-  </div>
-  <div class="portfolio-upload-hint fade-up">
-    📁 <strong data-i18n="port_hint_strong"></strong> — <span data-i18n="port_hint_text"></span>
-  </div>
-</section>
-
-<!-- REVIEWS -->
-<section id="reviews">
-  <div class="section-header fade-up">
-    <span class="section-label" data-i18n="rev_label"></span>
-    <h2 class="section-title" data-i18n="rev_title"></h2>
-    <p class="section-sub" data-i18n="rev_sub"></p>
-  </div>
-  <div class="reviews-grid">
-  </div>
-</section>
-
-<!-- RATE US -->
-<section id="rate-us">
-  <div class="section-header fade-up">
-    <span class="section-label" data-i18n="ru_label"></span>
-    <h2 class="section-title" data-i18n="ru_title"></h2>
-    <p class="section-sub" data-i18n="ru_sub"></p>
-  </div>
-
-  <div class="rateus-layout">
-
-    <!-- LEFT: submission form -->
-    <div class="rateus-form-wrap fade-up">
-      <div class="form-group">
-        <label class="form-label" data-i18n="ru_name_label"></label>
-        <input id="ru-name" type="text" class="form-input" data-i18n-placeholder="ru_name_ph">
-      </div>
-      <div class="form-group">
-        <label class="form-label" data-i18n="ru_rating_label"></label>
-        <div class="star-picker" id="starPicker">
-          <input type="radio" name="rating" id="s5" value="5"><label for="s5" title="5">★</label>
-          <input type="radio" name="rating" id="s4" value="4"><label for="s4" title="4">★</label>
-          <input type="radio" name="rating" id="s3" value="3"><label for="s3" title="3">★</label>
-          <input type="radio" name="rating" id="s2" value="2"><label for="s2" title="2">★</label>
-          <input type="radio" name="rating" id="s1" value="1"><label for="s1" title="1">★</label>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" data-i18n="ru_comment_label"></label>
-        <textarea id="ru-comment" class="form-input" rows="4" data-i18n-placeholder="ru_comment_ph"></textarea>
-      </div>
-      <button class="btn-submit" onclick="submitReview()">
-        <span data-i18n="ru_submit_btn"></span>
-      </button>
-      <div class="submit-toast" id="submitToast">
-        ✅ <span data-i18n="ru_toast"></span>
-      </div>
-    </div>
-
-    <!-- RIGHT: summary + submitted reviews -->
-    <div class="fade-up">
-      <div class="rateus-summary" id="rateUsSummary">
-        <div>
-          <div class="summary-score" id="summaryScore">—</div>
-          <div class="summary-stars" id="summaryStars">☆☆☆☆☆</div>
-          <div class="summary-count" id="summaryCount" data-i18n="ru_no_reviews"></div>
-        </div>
-        <div class="summary-bars" id="summaryBars">
-          <div class="bar-row"><span>5★</span><div class="bar-track"><div class="bar-fill" id="bar5" style="width:0%"></div></div><span id="cnt5">0</span></div>
-          <div class="bar-row"><span>4★</span><div class="bar-track"><div class="bar-fill" id="bar4" style="width:0%"></div></div><span id="cnt4">0</span></div>
-          <div class="bar-row"><span>3★</span><div class="bar-track"><div class="bar-fill" id="bar3" style="width:0%"></div></div><span id="cnt3">0</span></div>
-          <div class="bar-row"><span>2★</span><div class="bar-track"><div class="bar-fill" id="bar2" style="width:0%"></div></div><span id="cnt2">0</span></div>
-          <div class="bar-row"><span>1★</span><div class="bar-track"><div class="bar-fill" id="bar1" style="width:0%"></div></div><span id="cnt1">0</span></div>
-        </div>
-      </div>
-      <div class="user-reviews-grid" id="userReviewsGrid">
-        <div class="no-reviews-msg" id="noReviewsMsg" data-i18n="ru_empty"></div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="contact-inner">
-    <div class="section-header fade-up">
-      <span class="section-label" data-i18n="con_label"></span>
-      <h2 class="section-title" data-i18n="con_title"></h2>
-      <p class="section-sub" data-i18n="con_sub"></p>
-    </div>
-    <a id="whatsappBtn" href="https://wa.me/212636483530" target="_blank" class="whatsapp-btn fade-up">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      <span data-i18n="con_wa_btn"></span>
-    </a>
-    <div class="contact-info fade-up">
-      <div class="contact-chip">📞 +212 636 483 530</div>
-      <div class="contact-chip" data-i18n="con_fast"></div>
-      <div class="contact-chip" data-i18n="con_world"></div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">Chady Digital Services</div>
-  <p data-i18n="footer_tag"></p>
-  <p style="margin-top:10px;font-size:.75rem;opacity:.5;" data-i18n="footer_copy"></p>
-</footer>
-
-<script>
-/* ════════════════════════════════
-   TRANSLATIONS
-════════════════════════════════ */
-const T = {
-  fr: {
-    nav_home:'Accueil', nav_services:'Services', nav_portfolio:'Portfolio',
-    nav_reviews:'Avis', nav_rateus:'Évaluer', nav_contact:'Contact',
-
-    hero_badge:'Disponible pour de nouveaux projets',
-    tag1:'Rapide', tag2:'Abordable', tag3:'Professionnel',
-    hero_title_1:'Bienvenue chez', hero_title_2:'Services',
-    hero_desc:'Je fournis des services numériques rapides et abordables : montage vidéo, retouche photo et services digitaux. Mon objectif est de livrer un travail de haute qualité à des prix accessibles.',
-    hero_btn1:'Explorer les services', hero_btn2:'Message WhatsApp',
-    stat1:'Satisfaction client', stat2:'Prix de départ', stat3:'Livraison rapide',
-
-    srv_label:'Ce que je propose', srv_title:'Services Professionnels',
-    srv_sub:'Services numériques de haute qualité adaptés aux créateurs, entreprises et particuliers — à des prix vraiment abordables.',
-
-    s1_title:'Montage Vidéo',
-    s1_desc:'Montage professionnel pour toutes les grandes plateformes. Coupes, transitions, étalonnage des couleurs, sous-titres et plus.',
-    s1_unit:'/ par vidéo',
-
-    s2_title:'Tournage + Montage Vidéo',
-    s2_desc:'Je gère le tournage avec ma caméra professionnelle et le montage complet en post-production.',
-    s2_t1:'Haute Définition', s2_t2:'Caméra Pro', s2_t3:'Montage Complet',
-    s2_unit:'/ par vidéo',
-
-    s3_title:'Retouche Photo',
-    s3_desc:'Retouche photo professionnelle pour les réseaux sociaux, profils, portfolios ou usage personnel.',
-    s3_t1:'Retouche', s3_t2:'Étalonnage', s3_t3:'Réseaux Sociaux',
-    s3_unit:'/ par photo',
-
-    s4_title:'Montage Musical / Production Instrumentale',
-    s4_desc:'Services professionnels de montage musical, mixage et production instrumentale adaptés à votre vision créative.',
-    s4_t1:'Musique', s4_t2:'Mixage', s4_t3:'Instrumental', s4_t4:'Audio',
-    s4_unit:'/ par projet',
-
-    s5_title:'Publicités Réseaux Sociaux',
-    s5_desc:'Je crée et gère des publicités Facebook & Instagram pour booster votre activité avec un ciblage professionnel.',
-    s5_t3:'Publicités', s5_t4:'Marketing',
-    s5_price:'Prix Abordables',
-
-    s6_title:'Services Numériques',
-    s6_desc:'Recharges numériques rapides et fiables. Livraison immédiate, prix abordables.',
-    s6_li1:'Comptes Netflix', s6_li2:'Comptes Spotify',
-    s6_li3:'Recharges PUBG Mobile', s6_li4:'Diamants Free Fire',
-    s6_price:'Prix Abordables',
-
-    port_label:'Mon Travail', port_title:'Portfolio',
-    port_sub:'Une vitrine de projets de montage vidéo et photo. Chaque réalisation témoigne d\'une attention aux détails et d\'un savoir-faire de qualité.',
-    p1:'Montage YouTube — Exemple', p1_o:'Projet Montage Vidéo',
-    p2:'TikTok / Reels', p2_o:'Montage Format Court',
-    p3:'Retouche Photo — Exemple', p3_o:'Projet Retouche Photo',
-    p4:'Tournage + Montage', p4_o:'Production Complète',
-    p5:'Étalonnage Photo', p5_o:'Color Grading',
-    p6:'Instagram Reel', p6_o:'Contenu Instagram',
-    port_hint_strong:'Ajoutez votre travail ici',
-    port_hint_text:'Remplacez les cartes ci-dessus par des captures d\'écran ou aperçus de vos vrais projets.',
-
-    rev_label:'Avis Clients', rev_title:'Ce que disent les clients',
-    rev_sub:'Des retours réels de vrais clients. Je suis fier de livrer d\'excellents résultats à chaque fois.',
-    r1_text:'« Service très rapide et montage professionnel. Je le recommande vivement. On retravaillera ensemble ! »',
-    r2_text:'« Super communication et très bons prix. Le résultat a dépassé mes attentes. Je commanderai à nouveau. »',
-    r3_text:'« Le montage vidéo était absolument incroyable. Qualité professionnelle à un prix imbattable. Merci ! »',
-    r4_text:'« الخدمة رائعة وسريعة جدا! شكرا لك على الاحترافية والاهتمام بالتفاصيل. »',
-    verified:'Client vérifié',
-
-    con_label:'Me Contacter', con_title:'Prêt à commencer ?',
-    con_sub:'Envoyez-moi un message sur WhatsApp et je vous répondrai rapidement. Discutons de votre projet !',
-    con_wa_btn:'Écrire sur WhatsApp',
-    con_fast:'⚡ Réponse rapide', con_world:'🌍 Disponible partout',
-
-    footer_tag:'Rapide • Abordable • Professionnel',
-    footer_copy:'© 2025 Chady Digital Services. Tous droits réservés.',
-    wa_msg:'Bonjour ! Je souhaite commander un service.',
-
-    ru_label:'Votre avis compte', ru_title:'Donnez votre avis',
-    ru_sub:'Partagez votre expérience avec Chady Digital Services et aidez d\'autres clients à nous découvrir.',
-    ru_name_label:'Votre prénom', ru_name_ph:'Ex : Mohamed, Sara…',
-    ru_rating_label:'Note (1 à 5 étoiles)',
-    ru_comment_label:'Votre commentaire', ru_comment_ph:'Décrivez votre expérience…',
-    ru_submit_btn:'Soumettre mon avis',
-    ru_toast:'Merci ! Votre avis a bien été enregistré.',
-    ru_no_reviews:'Aucun avis pour l\'instant',
-    ru_empty:'Soyez le premier à laisser un avis !',
-    ru_verified:'Avis client'
-  },
-
-  ar: {
-    nav_home:'الرئيسية', nav_services:'الخدمات', nav_portfolio:'الأعمال',
-    nav_reviews:'التقييمات', nav_rateus:'قيّمنا', nav_contact:'التواصل',
-
-    hero_badge:'متاح لمشاريع جديدة',
-    tag1:'سريع', tag2:'بأسعار معقولة', tag3:'احترافي',
-    hero_title_1:'مرحبًا بك في', hero_title_2:'للخدمات الرقمية',
-    hero_desc:'أقدم خدمات رقمية سريعة وبأسعار مناسبة تشمل مونتاج الفيديو، تعديل الصور، والخدمات الرقمية المتنوعة. هدفي تسليم عمل عالي الجودة بأسعار في متناول الجميع.',
-    hero_btn1:'استعرض الخدمات', hero_btn2:'راسلني على واتساب',
-    stat1:'رضا العملاء', stat2:'السعر الابتدائي', stat3:'تسليم سريع',
-
-    srv_label:'ما أقدمه', srv_title:'الخدمات المهنية',
-    srv_sub:'خدمات رقمية عالية الجودة مصممة للمبدعين والشركات والأفراد — بأسعار حقيقية في متناول الجميع.',
-
-    s1_title:'مونتاج الفيديو',
-    s1_desc:'مونتاج احترافي لجميع المنصات الكبرى: قطع، انتقالات، تصحيح الألوان، ترجمات والمزيد.',
-    s1_unit:'/ للفيديو',
-
-    s2_title:'تصوير + مونتاج الفيديو',
-    s2_desc:'أتولى التصوير بكاميرا احترافية والمونتاج الكامل لإنتاج متكامل من البداية للنهاية.',
-    s2_t1:'دقة عالية', s2_t2:'كاميرا احترافية', s2_t3:'مونتاج كامل',
-    s2_unit:'/ للفيديو',
-
-    s3_title:'تعديل الصور',
-    s3_desc:'تعديل صور احترافي لوسائل التواصل الاجتماعي، الملفات الشخصية أو الاستخدام الخاص.',
-    s3_t1:'تنقية', s3_t2:'تصحيح الألوان', s3_t3:'منصات التواصل',
-    s3_unit:'/ للصورة',
-
-    s4_title:'تعديل الموسيقى / إنتاج الموسيقى التصويرية',
-    s4_desc:'خدمات احترافية لتعديل الموسيقى والميكساج والإنتاج الموسيقي وفق رؤيتك الإبداعية.',
-    s4_t1:'موسيقى', s4_t2:'ميكساج', s4_t3:'موسيقى تصويرية', s4_t4:'صوتيات',
-    s4_unit:'/ للمشروع',
-
-    s5_title:'إعلانات وسائل التواصل الاجتماعي',
-    s5_desc:'أنشئ وأدير إعلانات فيسبوك وإنستغرام لتعزيز نشاطك التجاري بطريقة احترافية وفعّالة.',
-    s5_t3:'إعلانات', s5_t4:'تسويق',
-    s5_price:'أسعار مناسبة',
-
-    s6_title:'الخدمات الرقمية',
-    s6_desc:'شحن رقمي سريع وموثوق. تسليم فوري بأسعار مناسبة.',
-    s6_li1:'حسابات Netflix', s6_li2:'حسابات Spotify',
-    s6_li3:'شحن PUBG Mobile', s6_li4:'ماسات Free Fire',
-    s6_price:'أسعار مناسبة',
-
-    port_label:'أعمالي', port_title:'معرض الأعمال',
-    port_sub:'عرض لمشاريع مونتاج الفيديو وتعديل الصور. كل عمل يعكس الاهتمام بالتفاصيل والجودة العالية.',
-    p1:'مونتاج يوتيوب — نموذج', p1_o:'مشروع مونتاج فيديو',
-    p2:'تيك توك / ريلز', p2_o:'مونتاج قصير',
-    p3:'تعديل صورة — نموذج', p3_o:'مشروع تعديل صورة',
-    p4:'تصوير + مونتاج', p4_o:'إنتاج متكامل',
-    p5:'تصحيح ألوان الصورة', p5_o:'تصحيح الألوان',
-    p6:'ريل إنستغرام', p6_o:'محتوى إنستغرام',
-    port_hint_strong:'أضف أعمالك هنا',
-    port_hint_text:'استبدل البطاقات أعلاه بلقطات شاشة أو معاينات لمشاريعك الفعلية لإبهار العملاء.',
-
-    rev_label:'تقييمات العملاء', rev_title:'ماذا يقول العملاء',
-    rev_sub:'تقييمات حقيقية من عملاء حقيقيين. أفخر بتقديم نتائج رائعة في كل مرة.',
-    r1_text:'«خدمة سريعة جداً ومونتاج احترافي. أنصح به بشدة. سنتعاون معاً مجدداً!»',
-    r2_text:'«تواصل ممتاز وأسعار جيدة جداً. النتيجة فاقت توقعاتي. سأطلب مجدداً.»',
-    r3_text:'«كان مونتاج الفيديو رائعاً جداً. جودة احترافية بسعر لا يُضاهى. شكراً جزيلاً!»',
-    r4_text:'«الخدمة رائعة وسريعة جدا! شكرا لك على الاحترافية والاهتمام بالتفاصيل.»',
-    verified:'عميل موثق',
-
-    con_label:'تواصل معي', con_title:'هل أنت مستعد للبدء؟',
-    con_sub:'أرسل لي رسالة على واتساب وسأرد عليك بسرعة. لنتحدث عن مشروعك!',
-    con_wa_btn:'تواصل عبر واتساب',
-    con_fast:'⚡ رد سريع', con_world:'🌍 متاح في كل مكان',
-
-    footer_tag:'سريع • بأسعار معقولة • احترافي',
-    footer_copy:'© 2025 Chady Digital Services. جميع الحقوق محفوظة.',
-    wa_msg:'مرحبا! أرغب في طلب خدمة.',
-
-    ru_label:'رأيك يهمنا', ru_title:'أضف تقييمك',
-    ru_sub:'شاركنا تجربتك مع Chady Digital Services وساعد الآخرين على التعرف علينا.',
-    ru_name_label:'اسمك', ru_name_ph:'مثال: محمد، سارة...',
-    ru_rating_label:'التقييم (من 1 إلى 5 نجوم)',
-    ru_comment_label:'تعليقك', ru_comment_ph:'صف تجربتك...',
-    ru_submit_btn:'إرسال التقييم',
-    ru_toast:'شكراً! تم تسجيل تقييمك بنجاح.',
-    ru_no_reviews:'لا توجد تقييمات بعد',
-    ru_empty:'كن أول من يترك تقييماً!',
-    ru_verified:'تقييم عميل'
-  }
-};
-
-/* ════════════════════════════════
-   LANGUAGE ENGINE
-════════════════════════════════ */
-let currentLang = 'fr';
-
-function applyTranslations() {
-  const dict = T[currentLang];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (dict[key] !== undefined) el.textContent = dict[key];
-  });
-}
-
-function setLang(lang) {
-  if (lang === currentLang) return;
-  document.body.classList.add('fading');
-
-  setTimeout(() => {
-    currentLang = lang;
-
-    // RTL / LTR + font class
-    if (lang === 'ar') {
-      document.documentElement.setAttribute('dir', 'rtl');
-      document.documentElement.setAttribute('lang', 'ar');
-      document.body.classList.replace('lang-fr', 'lang-ar');
-    } else {
-      document.documentElement.setAttribute('dir', 'ltr');
-      document.documentElement.setAttribute('lang', 'fr');
-      document.body.classList.replace('lang-ar', 'lang-fr');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chady Digital Studio creates premium video, photo, and ad content for creators, local brands, and growing businesses.">
+  <title>Chady Digital Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #071018;
+      --bg-soft: #0b1621;
+      --surface: rgba(14, 25, 36, 0.88);
+      --surface-strong: #101d2b;
+      --surface-alt: #142434;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.14);
+      --text: #edf4f8;
+      --muted: #92a5b6;
+      --accent: #ff8a3d;
+      --accent-soft: #ffd166;
+      --accent-cyan: #2ad0c3;
+      --success: #69d48f;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.38);
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --container: 1180px;
     }
 
-    applyTranslations();
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    // WhatsApp link
-    document.getElementById('whatsappBtn').href =
-      `https://wa.me/212636483530?text=${encodeURIComponent(T[lang].wa_msg)}`;
+    html {
+      scroll-behavior: smooth;
+    }
 
-    // Active button
-    document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
-    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    body {
+      font-family: "Sora", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 138, 61, 0.18), transparent 28%),
+        radial-gradient(circle at 80% 20%, rgba(42, 208, 195, 0.12), transparent 26%),
+        linear-gradient(180deg, #071018 0%, #0a131d 40%, #071018 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: opacity 0.25s ease;
+    }
 
-    document.body.classList.remove('fading');
-  }, 220);
-}
+    body.lang-ar {
+      font-family: "IBM Plex Sans Arabic", sans-serif;
+    }
 
-/* ════════════════════════════════
-   INIT
-════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  applyTranslations();
+    body.is-switching {
+      opacity: 0.45;
+    }
 
-  // Scroll fade-up
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 88px 88px;
+      mask-image: radial-gradient(circle at center, black 20%, transparent 85%);
+      opacity: 0.32;
+      z-index: 0;
+    }
 
-  // Nav scroll tint
-  window.addEventListener('scroll', () => {
-    document.getElementById('navbar').style.background =
-      window.scrollY > 60 ? 'rgba(11,15,26,0.97)' : 'rgba(11,15,26,0.85)';
-  });
-});
+    img {
+      display: block;
+      max-width: 100%;
+    }
 
-function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
-function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
 
-/* ════════════════════════════════
-   REVIEW SUBMISSION
-════════════════════════════════ */
-let userReviews = [];
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-function submitReview() {
-  const name    = document.getElementById('ru-name').value.trim();
-  const comment = document.getElementById('ru-comment').value.trim();
-  const ratingEl = document.querySelector('input[name="rating"]:checked');
-  const dict = T[currentLang];
+    .page-shell {
+      position: relative;
+      z-index: 1;
+    }
 
-  if (!name || !ratingEl) {
-    const field = !name ? 'ru-name' : 'starPicker';
-    const el = document.getElementById(field);
-    el.style.outline = '2px solid #f87171';
-    setTimeout(() => el.style.outline = '', 1500);
-    return;
-  }
+    .container {
+      width: min(calc(100% - 32px), var(--container));
+      margin-inline: auto;
+    }
 
-  const rating = parseInt(ratingEl.value);
-  const now = new Date();
-  const dateStr = now.toLocaleDateString(currentLang === 'ar' ? 'ar-MA' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' });
+    .section {
+      padding: 110px 0;
+      position: relative;
+    }
 
-  userReviews.unshift({ name, rating, comment, date: dateStr });
+    .section-header {
+      display: grid;
+      gap: 16px;
+      max-width: 760px;
+      margin-bottom: 42px;
+    }
 
-  // Reset form
-  document.getElementById('ru-name').value = '';
-  document.getElementById('ru-comment').value = '';
-  document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+    }
 
-  // Show toast
-  const toast = document.getElementById('submitToast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3500);
+    .eyebrow::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      box-shadow: 0 0 18px rgba(255, 138, 61, 0.5);
+    }
 
-  renderUserReviews();
-  updateSummary();
-}
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
 
-function renderUserReviews() {
-  const grid = document.getElementById('userReviewsGrid');
-  const dict = T[currentLang];
+    body.lang-ar .section-title {
+      letter-spacing: 0;
+      line-height: 1.2;
+    }
 
-  if (userReviews.length === 0) {
-    grid.innerHTML = `<div class="no-reviews-msg" id="noReviewsMsg" data-i18n="ru_empty">${dict.ru_empty}</div>`;
-    return;
-  }
+    .section-copy {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 640px;
+    }
 
-  grid.innerHTML = userReviews.map(r => {
-    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-    const initials = r.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-    return `
-      <div class="user-review-card">
-        <div class="user-review-header">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div class="reviewer-avatar" style="width:32px;height:32px;font-size:.75rem">${initials}</div>
-            <span class="user-review-name">${escHtml(r.name)}</span>
+    .surface-card {
+      background: linear-gradient(180deg, rgba(18, 31, 44, 0.94), rgba(11, 22, 32, 0.96));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding-top: 18px;
+    }
+
+    .nav-shell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      background: rgba(8, 17, 25, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .site-nav.scrolled .nav-shell {
+      background: rgba(8, 17, 25, 0.92);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 138, 61, 0.18), rgba(42, 208, 195, 0.18));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--accent-soft);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-text {
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 0.94rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+
+    .brand-subtitle {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.88rem;
+      color: var(--muted);
+      transition: color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lang-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--accent), #ffb257);
+      color: #081017;
+    }
+
+    .lang-btn:not(.active):hover {
+      color: var(--text);
+    }
+
+    .cta-button,
+    .ghost-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .cta-button {
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: #071018;
+      box-shadow: 0 18px 40px rgba(255, 138, 61, 0.25);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 24px 48px rgba(255, 138, 61, 0.32);
+    }
+
+    .ghost-button {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .ghost-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-cta {
+      padding-inline: 18px;
+    }
+
+    .mobile-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .mobile-toggle svg {
+      width: 22px;
+      height: 22px;
+      margin: auto;
+    }
+
+    .mobile-menu {
+      display: none;
+      margin-top: 12px;
+      padding: 18px;
+      border-radius: 26px;
+      background: rgba(8, 17, 25, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .mobile-menu.open {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mobile-menu a {
+      color: var(--muted);
+      padding: 12px 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .mobile-menu .lang-switcher {
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .hero {
+      padding-top: 34px;
+      padding-bottom: 88px;
+    }
+
+    .hero-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 42px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 24px;
+    }
+
+    .hero-intro {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.82rem;
+      color: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .hero-intro::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 18px rgba(105, 212, 143, 0.55);
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 6vw, 5.9rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+      max-width: 11ch;
+    }
+
+    body.lang-ar .hero-title {
+      letter-spacing: 0;
+      line-height: 1.15;
+      max-width: 13ch;
+    }
+
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-description {
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 1.04rem;
+      max-width: 62ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .hero-notes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-note {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      padding: 22px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat-value {
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 660px;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-panel {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      min-height: 620px;
+      padding: 18px;
+      border-radius: 38px;
+      background:
+        linear-gradient(160deg, rgba(255, 138, 61, 0.14), rgba(42, 208, 195, 0.05) 42%, rgba(255, 255, 255, 0.03) 100%),
+        rgba(11, 22, 31, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
+
+    .visual-card {
+      position: absolute;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.32);
+      background: #0d1722;
+    }
+
+    .visual-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .visual-card.main {
+      inset: 26px 24px 190px 24px;
+    }
+
+    .visual-card.secondary-a {
+      width: 210px;
+      height: 240px;
+      left: 20px;
+      bottom: 24px;
+      transform: rotate(-5deg);
+    }
+
+    .visual-card.secondary-b {
+      width: 180px;
+      height: 220px;
+      right: 24px;
+      bottom: 32px;
+      transform: rotate(6deg);
+    }
+
+    .floating-card {
+      position: absolute;
+      z-index: 3;
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: rgba(7, 16, 24, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
+    }
+
+    .floating-card.top {
+      top: 24px;
+      right: -18px;
+      width: 220px;
+    }
+
+    .floating-card.bottom {
+      left: -10px;
+      bottom: 182px;
+      width: 250px;
+    }
+
+    .floating-label {
+      font-size: 0.76rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 8px;
+    }
+
+    .floating-value {
+      font-size: 1.2rem;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .floating-value strong {
+      color: var(--accent-soft);
+    }
+
+    .audience-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .audience-pill {
+      padding: 11px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #cfd9e1;
+      font-size: 0.84rem;
+    }
+
+    .benefit-grid,
+    .service-grid,
+    .showcase-grid,
+    .package-grid,
+    .process-grid,
+    .review-grid,
+    .faq-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .benefit-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .benefit-card {
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .benefit-card .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(255, 138, 61, 0.18), rgba(42, 208, 195, 0.16));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--accent-soft);
+    }
+
+    .benefit-title,
+    .service-title,
+    .package-name,
+    .process-title,
+    .review-role {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .benefit-text,
+    .service-copy,
+    .showcase-copy,
+    .package-copy,
+    .process-copy,
+    .review-quote,
+    .faq-answer,
+    .meta-text {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 0.95rem;
+    }
+
+    .service-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .service-card {
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent-cyan));
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--line-strong);
+    }
+
+    .service-card:hover::before {
+      opacity: 1;
+    }
+
+    .service-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .service-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      flex-shrink: 0;
+    }
+
+    .service-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--accent-soft);
+    }
+
+    .service-price {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent-soft);
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 209, 102, 0.24);
+      background: rgba(255, 209, 102, 0.08);
+      white-space: nowrap;
+    }
+
+    .service-tags,
+    .addon-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .service-tags li,
+    .addon-list li {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #d4dee6;
+      font-size: 0.8rem;
+    }
+
+    .showcase-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .showcase-card {
+      display: grid;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .showcase-image {
+      position: relative;
+      min-height: 320px;
+      overflow: hidden;
+    }
+
+    .showcase-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 20%, rgba(7, 16, 24, 0.78) 100%);
+    }
+
+    .showcase-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.45s ease;
+    }
+
+    .showcase-card:hover .showcase-image img {
+      transform: scale(1.04);
+    }
+
+    .showcase-body {
+      padding: 26px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .showcase-tag {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(42, 208, 195, 0.1);
+      color: #8ce7df;
+      border: 1px solid rgba(42, 208, 195, 0.14);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .showcase-title {
+      font-size: 1.22rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .showcase-note {
+      padding-top: 4px;
+      font-size: 0.84rem;
+      color: #cdd7de;
+    }
+
+    .package-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .package-card {
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .package-card.featured {
+      border-color: rgba(255, 138, 61, 0.28);
+      background:
+        linear-gradient(180deg, rgba(255, 138, 61, 0.12), rgba(17, 29, 41, 0.96) 25%, rgba(10, 19, 29, 0.98) 100%);
+      transform: translateY(-8px);
+    }
+
+    .badge-popular {
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 209, 102, 0.12);
+      color: var(--accent-soft);
+      border: 1px solid rgba(255, 209, 102, 0.24);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .package-price {
+      display: grid;
+      gap: 8px;
+    }
+
+    .package-price span {
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .package-price small {
+      font-size: 0.76rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .package-list {
+      display: grid;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .package-list li {
+      color: #d7e0e7;
+      line-height: 1.55;
+      display: grid;
+      grid-template-columns: 16px 1fr;
+      gap: 12px;
+      align-items: start;
+      font-size: 0.92rem;
+    }
+
+    .package-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      margin-top: 8px;
+      box-shadow: 0 0 14px rgba(255, 138, 61, 0.45);
+    }
+
+    .extra-services {
+      margin-top: 24px;
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .process-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .process-card {
+      padding: 26px;
+      display: grid;
+      gap: 16px;
+      min-height: 100%;
+    }
+
+    .step-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 138, 61, 0.12);
+      border: 1px solid rgba(255, 138, 61, 0.2);
+      color: var(--accent-soft);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .review-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .review-card {
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .review-stars {
+      display: flex;
+      gap: 6px;
+      color: var(--accent-soft);
+      font-size: 1rem;
+    }
+
+    .review-quote {
+      font-size: 0.98rem;
+    }
+
+    .review-footer {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .review-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(255, 138, 61, 0.22), rgba(42, 208, 195, 0.2));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 800;
+    }
+
+    .review-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .review-role {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .faq-item {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .faq-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary span:last-child {
+      color: var(--accent-soft);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .faq-answer {
+      padding: 0 24px 24px;
+    }
+
+    .contact-panel {
+      padding: 34px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .contact-panel::before {
+      content: "";
+      position: absolute;
+      inset: auto -10% -60% auto;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255, 138, 61, 0.24), transparent 68%);
+      filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .contact-text {
+      display: grid;
+      gap: 16px;
+      max-width: 680px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .meta-chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      color: #cfdae3;
+      font-size: 0.84rem;
+    }
+
+    .site-footer {
+      padding: 34px 0 44px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-shell {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1120px) {
+      .hero-shell,
+      .contact-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 560px;
+      }
+
+      .service-grid,
+      .package-grid,
+      .review-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .benefit-grid,
+      .process-grid,
+      .faq-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav-links,
+      .nav-cta,
+      .nav-shell .lang-switcher {
+        display: none;
+      }
+
+      .mobile-toggle {
+        display: inline-grid;
+      }
+
+      .hero-panel {
+        min-height: 560px;
+      }
+
+      .showcase-grid,
+      .service-grid,
+      .package-grid,
+      .benefit-grid,
+      .process-grid,
+      .review-grid,
+      .faq-grid,
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .section {
+        padding: 82px 0;
+      }
+
+      .nav-shell {
+        padding: 12px 14px;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+      }
+
+      .hero {
+        padding-bottom: 70px;
+      }
+
+      .hero-panel {
+        min-height: 500px;
+      }
+
+      .visual-card.main {
+        inset: 18px 18px 170px 18px;
+      }
+
+      .visual-card.secondary-a {
+        width: 170px;
+        height: 190px;
+        left: 18px;
+      }
+
+      .visual-card.secondary-b {
+        width: 145px;
+        height: 180px;
+        right: 18px;
+      }
+
+      .floating-card.top {
+        right: 12px;
+        width: 185px;
+      }
+
+      .floating-card.bottom {
+        left: 14px;
+        bottom: 160px;
+        width: 210px;
+      }
+
+      .contact-panel,
+      .service-card,
+      .package-card,
+      .benefit-card,
+      .showcase-body,
+      .review-card,
+      .process-card {
+        padding: 24px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body class="lang-fr">
+  <div class="page-shell">
+    <header class="site-nav" id="siteNav">
+      <div class="container">
+        <div class="nav-shell">
+          <a class="brand" href="#home" aria-label="Chady Digital Studio">
+            <div class="brand-mark">CD</div>
+            <div class="brand-text">
+              <span class="brand-title" data-copy="brand.title"></span>
+              <span class="brand-subtitle" data-copy="brand.subtitle"></span>
+            </div>
+          </a>
+
+          <nav aria-label="Primary">
+            <ul class="nav-links">
+              <li><a href="#home" data-copy="nav.home"></a></li>
+              <li><a href="#services" data-copy="nav.services"></a></li>
+              <li><a href="#showcase" data-copy="nav.showcase"></a></li>
+              <li><a href="#packages" data-copy="nav.packages"></a></li>
+              <li><a href="#faq" data-copy="nav.faq"></a></li>
+              <li><a href="#contact" data-copy="nav.contact"></a></li>
+            </ul>
+          </nav>
+
+          <div class="nav-actions">
+            <div class="lang-switcher" aria-label="Language switcher">
+              <button class="lang-btn active" data-lang="fr" type="button">FR</button>
+              <button class="lang-btn" data-lang="ar" type="button">AR</button>
+            </div>
+            <a class="cta-button nav-cta wa-link" href="https://wa.me/212636483530" target="_blank" rel="noreferrer" data-copy="nav.cta"></a>
+            <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+                <path d="M4 7h16"></path>
+                <path d="M4 12h16"></path>
+                <path d="M4 17h16"></path>
+              </svg>
+            </button>
           </div>
-          <span class="user-review-stars">${stars}</span>
         </div>
-        ${r.comment ? `<div class="user-review-text">${escHtml(r.comment)}</div>` : ''}
-        <div class="user-review-date">${r.date}</div>
-      </div>`;
-  }).join('');
-}
 
-function updateSummary() {
-  if (userReviews.length === 0) return;
-  const total = userReviews.length;
-  const avg   = userReviews.reduce((s, r) => s + r.rating, 0) / total;
-  const counts = [0,0,0,0,0];
-  userReviews.forEach(r => counts[r.rating - 1]++);
+        <div class="mobile-menu" id="mobileMenu">
+          <a href="#home" data-copy="nav.home"></a>
+          <a href="#services" data-copy="nav.services"></a>
+          <a href="#showcase" data-copy="nav.showcase"></a>
+          <a href="#packages" data-copy="nav.packages"></a>
+          <a href="#faq" data-copy="nav.faq"></a>
+          <a href="#contact" data-copy="nav.contact"></a>
+          <a class="cta-button wa-link" href="https://wa.me/212636483530" target="_blank" rel="noreferrer" data-copy="nav.cta"></a>
+          <div class="lang-switcher" aria-label="Language switcher mobile">
+            <button class="lang-btn active" data-lang="fr" type="button">FR</button>
+            <button class="lang-btn" data-lang="ar" type="button">AR</button>
+          </div>
+        </div>
+      </div>
+    </header>
 
-  document.getElementById('summaryScore').textContent = avg.toFixed(1);
-  const filled = Math.round(avg);
-  document.getElementById('summaryStars').textContent = '★'.repeat(filled) + '☆'.repeat(5-filled);
+    <main>
+      <section class="hero section" id="home">
+        <div class="container">
+          <div class="hero-shell">
+            <div class="hero-copy reveal">
+              <div class="hero-intro" data-copy="hero.badge"></div>
+              <h1 class="hero-title" data-copy-html="hero.title"></h1>
+              <p class="hero-description" data-copy="hero.description"></p>
 
-  const dict = T[currentLang];
-  document.getElementById('summaryCount').textContent =
-    currentLang === 'ar' ? `${total} تقييم` : `${total} avis`;
+              <div class="hero-actions">
+                <a class="cta-button" href="#services" data-copy="hero.primaryCta"></a>
+                <a class="ghost-button wa-link" href="https://wa.me/212636483530" target="_blank" rel="noreferrer" data-copy="hero.secondaryCta"></a>
+              </div>
 
-  for (let i = 1; i <= 5; i++) {
-    const pct = total > 0 ? Math.round((counts[i-1] / total) * 100) : 0;
-    document.getElementById(`bar${i}`).style.width = pct + '%';
-    document.getElementById(`cnt${i}`).textContent = counts[i-1];
-  }
-}
+              <div class="hero-notes" id="heroNotes"></div>
 
-function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+              <div class="hero-stats" id="heroStats"></div>
 
-// Extend applyTranslations to handle placeholders and re-render dynamic content
-const _origApply = applyTranslations;
-applyTranslations = function() {
-  _origApply();
-  const dict = T[currentLang];
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    if (dict[key]) el.placeholder = dict[key];
-  });
-  // Re-render user reviews with updated locale date labels isn't needed,
-  // but refresh the empty/summary text
-  if (userReviews.length === 0) {
-    const msg = document.getElementById('noReviewsMsg');
-    if (msg) msg.textContent = dict.ru_empty || '';
-  } else {
-    updateSummary();
-  }
-};
-</script>
+              <div class="audience-strip" id="audienceStrip"></div>
+            </div>
+
+            <div class="hero-visual reveal">
+              <div class="hero-panel">
+                <figure class="visual-card main">
+                  <img src="https://images.unsplash.com/photo-1757845524683-611470b2d7ce?auto=format&fit=crop&w=1400&q=80" alt="Video editing workstation with cameras and screens">
+                </figure>
+                <figure class="visual-card secondary-a">
+                  <img src="https://images.unsplash.com/photo-1724754608847-afa768169635?auto=format&fit=crop&w=1000&q=80" alt="Laptop with social media workflow on screen">
+                </figure>
+                <figure class="visual-card secondary-b">
+                  <img src="https://images.unsplash.com/photo-1744948961024-66baaafbb5dc?auto=format&fit=crop&w=1000&q=80" alt="Laptop photo editing software open">
+                </figure>
+
+                <div class="floating-card top">
+                  <div class="floating-label" data-copy="hero.visualTopLabel"></div>
+                  <div class="floating-value" data-copy-html="hero.visualTopValue"></div>
+                </div>
+
+                <div class="floating-card bottom">
+                  <div class="floating-label" data-copy="hero.visualBottomLabel"></div>
+                  <div class="floating-value" data-copy-html="hero.visualBottomValue"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="benefits">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="eyebrow" data-copy="benefits.eyebrow"></span>
+            <h2 class="section-title" data-copy="benefits.title"></h2>
+            <p class="section-copy" data-copy="benefits.description"></p>
+          </div>
+          <div class="benefit-grid" id="benefitGrid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="services">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="eyebrow" data-copy="servicesSection.eyebrow"></span>
+            <h2 class="section-title" data-copy="servicesSection.title"></h2>
+            <p class="section-copy" data-copy="servicesSection.description"></p>
+          </div>
+          <div class="service-grid" id="serviceGrid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="showcase">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="eyebrow" data-copy="showcaseSection.eyebrow"></span>
+            <h2 class="section-title" data-copy="showcaseSection.title"></h2>
+            <p class="section-copy" data-copy="showcaseSection.description"></p>
+          </div>
+          <div class="showcase-grid" id="showcaseGrid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="packages">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="eyebrow" data-copy="packagesSection.eyebrow"></span>
+            <h2 class="section-title" data-copy="packagesSection.title"></h2>
+            <p class="section-copy" data-copy="packagesSection.description"></p>
+          </div>
+          <div class="package-grid" id="packageGrid"></div>
+          <div class="extra-services surface-card reveal">
+            <span class="eyebrow" data-copy="extras.eyebrow"></span>
+            <p class="meta-text" data-copy="extras.description"></p>
+            <ul class="addon-list" id="addonList"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="process">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="eyebrow" data-copy="processSection.eyebrow"></span>
+            <h2 class="section-title" data-copy="processSection.title"></h2>
+            <p class="section-copy" data-copy="processSection.description"></p>
+          </div>
+          <div class="process-grid" id="processGrid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="reviews">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="eyebrow" data-copy="reviewsSection.eyebrow"></span>
+            <h2 class="section-title" data-copy="reviewsSection.title"></h2>
+            <p class="section-copy" data-copy="reviewsSection.description"></p>
+          </div>
+          <div class="review-grid" id="reviewGrid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="faq">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="eyebrow" data-copy="faqSection.eyebrow"></span>
+            <h2 class="section-title" data-copy="faqSection.title"></h2>
+            <p class="section-copy" data-copy="faqSection.description"></p>
+          </div>
+          <div class="faq-grid" id="faqGrid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="contact">
+        <div class="container">
+          <div class="contact-panel surface-card reveal">
+            <div class="contact-text">
+              <span class="eyebrow" data-copy="contact.eyebrow"></span>
+              <h2 class="section-title" data-copy="contact.title"></h2>
+              <p class="section-copy" data-copy="contact.description"></p>
+              <div class="contact-meta" id="contactMeta"></div>
+            </div>
+            <div class="contact-actions">
+              <a class="cta-button wa-link" href="https://wa.me/212636483530" target="_blank" rel="noreferrer" data-copy="contact.primaryCta"></a>
+              <a class="ghost-button" href="#packages" data-copy="contact.secondaryCta"></a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-shell">
+          <div>
+            <strong data-copy="brand.title"></strong>
+            <span> · </span>
+            <span data-copy="footer.tagline"></span>
+          </div>
+          <div>
+            <span data-copy="footer.copy"></span>
+            <span> © </span>
+            <span id="year"></span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const ICONS = {
+      spark: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3l1.9 4.7L18.5 9l-4.6 1.3L12 15l-1.9-4.7L5.5 9l4.6-1.3L12 3z"></path>
+          <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"></path>
+        </svg>`,
+      play: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+          <path d="M10 9l5 3-5 3V9z"></path>
+        </svg>`,
+      camera: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"></path>
+          <circle cx="12" cy="12" r="3.5"></circle>
+        </svg>`,
+      image: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+          <circle cx="9" cy="10" r="1.6"></circle>
+          <path d="M21 15l-4.5-4.5L8 19"></path>
+        </svg>`,
+      megaphone: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 11v2a2 2 0 0 0 2 2h2l4 4V5L7 9H5a2 2 0 0 0-2 2z"></path>
+          <path d="M15 8a5 5 0 0 1 0 8"></path>
+          <path d="M18 5a9 9 0 0 1 0 14"></path>
+        </svg>`,
+      calendar: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="17" rx="3"></rect>
+          <path d="M8 2v4"></path>
+          <path d="M16 2v4"></path>
+          <path d="M3 10h18"></path>
+        </svg>`,
+      music: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 18V6l10-2v12"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="19" cy="16" r="3"></circle>
+        </svg>`,
+      shield: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"></path>
+          <path d="M9.2 12.3l1.8 1.8 3.8-4"></path>
+        </svg>`,
+      bolt: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"></path>
+        </svg>`,
+      message: `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a3 3 0 0 1-3 3H8l-5 3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3z"></path>
+        </svg>`
+    };
+
+    const SHOWCASE_MEDIA = [
+      {
+        image: "https://images.unsplash.com/photo-1757845524683-611470b2d7ce?auto=format&fit=crop&w=1400&q=80"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1724754608847-afa768169635?auto=format&fit=crop&w=1400&q=80"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1745848038152-cccaa51755c0?auto=format&fit=crop&w=1400&q=80"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1743856641639-7fa1857d85ab?auto=format&fit=crop&w=1400&q=80"
+      }
+    ];
+
+    const COPY = {
+      fr: {
+        pageTitle: "Chady Digital Studio | Vidéo, Photo & Publicité",
+        brand: {
+          title: "Chady Digital Studio",
+          subtitle: "Video · Photo · Ads"
+        },
+        nav: {
+          home: "Accueil",
+          services: "Services",
+          showcase: "Style visuel",
+          packages: "Offres",
+          faq: "FAQ",
+          contact: "Contact",
+          cta: "Parler sur WhatsApp"
+        },
+        hero: {
+          badge: "Studio créatif pour marques, commerces et créateurs",
+          title: "Une image de marque <span class='accent'>premium</span> qui inspire confiance et fait vendre.",
+          description: "Je crée des vidéos, photos et publicités propres, rapides et prêtes à publier pour Instagram, TikTok, YouTube et campagnes locales. L'objectif n'est pas juste de faire joli, mais de rendre votre business plus sérieux, plus visible et plus vendeur.",
+          primaryCta: "Découvrir les services",
+          secondaryCta: "Message WhatsApp",
+          visualTopLabel: "Positionnement",
+          visualTopValue: "<strong>Premium</strong> mais simple à commander",
+          visualBottomLabel: "Formats livrés",
+          visualBottomValue: "Reels, stories, posts, ads, thumbnails et contenu produit",
+          notes: [
+            "Réponse rapide",
+            "Livraison 24h à 72h",
+            "Formats prêts pour mobile"
+          ],
+          stats: [
+            { value: "24-72h", label: "Délai habituel pour la plupart des contenus courts" },
+            { value: "MAD", label: "Tarifs pensés pour rester accessibles et professionnels" },
+            { value: "9:16", label: "Montage optimisé pour Reels, Shorts, Stories et TikTok" }
+          ],
+          audiences: [
+            "Créateurs",
+            "Restaurants",
+            "Beauté",
+            "E-commerce",
+            "Artistes",
+            "Petites entreprises"
+          ]
+        },
+        benefits: {
+          eyebrow: "Pourquoi ce site est plus fort",
+          title: "Une image plus sérieuse pour vendre plus facilement",
+          description: "Le bon contenu visuel aide votre business à inspirer confiance avant même le premier message. Cette direction met l'accent sur la qualité, la clarté et une vraie sensation de marque.",
+          items: [
+            {
+              icon: "shield",
+              title: "Image professionnelle",
+              text: "Un site plus propre et plus crédible donne immédiatement une meilleure impression de votre business."
+            },
+            {
+              icon: "bolt",
+              title: "Contenu prêt à publier",
+              text: "Je pense les livrables pour les plateformes où vous vendez déjà : Reels, Stories, Shorts, posts et publicités."
+            },
+            {
+              icon: "message",
+              title: "Commande simple",
+              text: "Le client comprend vite ce que vous faites, combien ça vaut et comment vous contacter sans se perdre."
+            }
+          ]
+        },
+        servicesSection: {
+          eyebrow: "Services",
+          title: "Ce que je peux produire pour votre business",
+          description: "J'ai gardé vos services les plus utiles et j'ai ajouté des offres plus fortes commercialement pour rendre le site plus premium et plus vendable."
+        },
+        services: [
+          {
+            icon: "play",
+            title: "Montage vidéo premium",
+            copy: "Reels, TikTok, YouTube Shorts, promos produit, hooks, sous-titres et montage propre pensé pour capter rapidement.",
+            price: "À partir de 70 MAD",
+            tags: ["Sous-titres", "Transitions propres", "Format vertical"]
+          },
+          {
+            icon: "camera",
+            title: "Tournage + montage",
+            copy: "Captation avec caméra, lumière et montage final pour vidéos produit, présentation business, interviews ou contenus réseaux sociaux.",
+            price: "À partir de 300 MAD",
+            tags: ["Caméra", "Plans propres", "Livrable complet"]
+          },
+          {
+            icon: "image",
+            title: "Retouche photo & visuels",
+            copy: "Retouche visage, produit, couleurs, miniatures et visuels social media pour rendre votre identité plus nette et plus premium.",
+            price: "À partir de 50 MAD",
+            tags: ["Retouche", "Color grading", "Miniatures"]
+          },
+          {
+            icon: "megaphone",
+            title: "Créations publicitaires",
+            copy: "Visuels et vidéos publicitaires pour Facebook et Instagram, avec variations prêtes pour stories, feed et campagnes locales.",
+            price: "À partir de 200 MAD",
+            tags: ["Meta Ads", "Stories", "Versions multiples"]
+          },
+          {
+            icon: "calendar",
+            title: "Pack mensuel de contenu",
+            copy: "Une offre plus business pour gérer plusieurs contenus d'un coup : reels, visuels, déclinaisons et support WhatsApp.",
+            price: "À partir de 900 MAD",
+            tags: ["Pack mensuel", "Lot de contenus", "Gain de temps"]
+          },
+          {
+            icon: "music",
+            title: "Montage musical & audio",
+            copy: "Nettoyage, arrangement, montage musical ou support instrumental pour clips, intros, contenu promotionnel et projets créatifs.",
+            price: "Sur demande",
+            tags: ["Audio", "Musique", "Support créatif"]
+          }
+        ],
+        showcaseSection: {
+          eyebrow: "Direction créative",
+          title: "Le niveau visuel que votre marque peut atteindre",
+          description: "Cette section utilise de vraies images pour donner une sensation plus haut de gamme. Elle sert de vitrine de style et peut être remplacée plus tard par vos vrais projets."
+        },
+        showcase: [
+          {
+            tag: "Post-production",
+            title: "Setup de montage vidéo premium",
+            copy: "Une ambiance plus sérieuse, plus technique et plus premium pour montrer immédiatement que vous travaillez proprement.",
+            note: "Idéal pour présenter le service de montage vidéo."
+          },
+          {
+            tag: "Social media",
+            title: "Contenu pensé pour les marques et créateurs",
+            copy: "Le site montre que vous comprenez Instagram, LinkedIn, TikTok et la logique de contenu moderne orientée business.",
+            note: "Parfait pour vendre packs mensuels et gestion visuelle."
+          },
+          {
+            tag: "Capture produit",
+            title: "Shooting et préparation de mise en scène",
+            copy: "Un visuel studio chaleureux fonctionne bien pour produits, commerce local, food, beauté ou lancement de marque.",
+            note: "Bon support pour l'offre photo et publicité."
+          },
+          {
+            tag: "Retouche photo",
+            title: "Finition nette et rendu éditorial",
+            copy: "La partie retouche devient plus crédible quand on montre un univers de travail sophistiqué et bien présenté.",
+            note: "Très utile pour photos, portraits et miniatures."
+          }
+        ],
+        packagesSection: {
+          eyebrow: "Offres",
+          title: "Packages plus professionnels et plus faciles à vendre",
+          description: "Au lieu d'une simple liste de petits prix, ces offres donnent une vraie structure commerciale. Elles restent simples à commander sur WhatsApp."
+        },
+        packages: [
+          {
+            name: "Starter Reel",
+            price: "70 MAD",
+            copy: "Pour un créateur ou un petit business qui veut un premier contenu propre.",
+            featured: false,
+            points: [
+              "1 vidéo courte montée",
+              "Sous-titres simples",
+              "Export optimisé pour mobile",
+              "Petites retouches incluses"
+            ]
+          },
+          {
+            name: "Content Pack",
+            price: "450 MAD",
+            copy: "Le pack le plus utile pour commerces, restaurants et marques qui veulent publier régulièrement.",
+            featured: true,
+            points: [
+              "4 contenus courts ou visuels",
+              "Formats reels + stories",
+              "Direction visuelle cohérente",
+              "Support WhatsApp prioritaire"
+            ]
+          },
+          {
+            name: "Brand Boost",
+            price: "1200 MAD",
+            copy: "Une offre plus complète pour lancer une campagne, une page plus forte ou une période de promotion.",
+            featured: false,
+            points: [
+              "Tournage ou pack créatif plus large",
+              "Montage + visuels pub",
+              "Déclinaisons multi-format",
+              "Livraison prioritaire"
+            ]
+          }
+        ],
+        extras: {
+          eyebrow: "Aussi disponible",
+          description: "J'ai gardé vos services digitaux rapides comme option secondaire pour ne pas casser l'image premium du site tout en restant fidèle à votre activité."
+        },
+        extraItems: [
+          "Services digitaux",
+          "Recharges gaming",
+          "Netflix / Spotify",
+          "PUBG Mobile",
+          "Free Fire",
+          "Livraison rapide"
+        ],
+        processSection: {
+          eyebrow: "Processus",
+          title: "Une commande simple, rapide et claire",
+          description: "Le site doit rassurer le client. Voilà pourquoi j'ai ajouté un vrai mini-process professionnel : il explique comment on travaille ensemble."
+        },
+        process: [
+          {
+            title: "Brief WhatsApp",
+            copy: "Vous envoyez votre besoin, votre format et votre objectif. Je vous réponds avec une proposition claire."
+          },
+          {
+            title: "Direction rapide",
+            copy: "Je valide le style, le ton, le format et les références visuelles pour éviter les allers-retours inutiles."
+          },
+          {
+            title: "Production",
+            copy: "Je réalise le montage, la retouche, la capture ou les versions publicitaires selon le pack choisi."
+          },
+          {
+            title: "Livraison",
+            copy: "Vous recevez les formats prêts à poster avec les ajustements nécessaires pour finaliser proprement."
+          }
+        ],
+        reviewsSection: {
+          eyebrow: "Retour client",
+          title: "Des retours simples, crédibles et rassurants",
+          description: "J'ai gardé l'idée des avis, mais dans une présentation plus premium et plus cohérente avec le reste du site."
+        },
+        reviews: [
+          {
+            name: "Iman Maghraoui",
+            role: "Client contenu court",
+            quote: "Service très rapide et montage professionnel. Je le recommande vivement et je retravaillerai avec lui.",
+            avatar: "IM"
+          },
+          {
+            name: "Abdenour Kasqmi",
+            role: "Petite entreprise",
+            quote: "Super communication et très bons prix. Le rendu final a dépassé mes attentes.",
+            avatar: "AK"
+          },
+          {
+            name: "Byakho",
+            role: "Projet vidéo",
+            quote: "Le montage était propre, moderne et pro. Très bon rapport qualité-prix.",
+            avatar: "BY"
+          },
+          {
+            name: "Hamid Kun",
+            role: "Projet musical",
+            quote: "Le rendu final etait net, moderne et beaucoup plus serieux. J'ai vraiment apprecie le gout visuel et la qualite du service.",
+            avatar: "HK"
+          },
+          {
+            name: "Amina Sqali",
+            role: "Marque beaute",
+            quote: "J'ai beaucoup aime les details, les couleurs et la presentation. Le resultat donne une image plus premium et plus rassurante.",
+            avatar: "AS"
+          }
+        ],
+        faqSection: {
+          eyebrow: "FAQ",
+          title: "Ce qu'un client veut savoir avant de commander",
+          description: "Cette section réduit les hésitations et donne au site un vrai niveau business."
+        },
+        faq: [
+          {
+            question: "Combien de temps faut-il pour livrer ?",
+            answer: "La plupart des contenus courts peuvent être livrés en 24h à 72h selon la charge de travail et la complexité du projet."
+          },
+          {
+            question: "Travaillez-vous en français et en arabe ?",
+            answer: "Oui. Le site fonctionne dans les deux langues et vous pouvez aussi recevoir des contenus adaptés à votre audience locale."
+          },
+          {
+            question: "Est-ce que les modifications sont incluses ?",
+            answer: "Oui, des ajustements raisonnables sont prévus pour finaliser proprement le rendu, surtout sur les packs standards."
+          },
+          {
+            question: "Puis-je commander un seul reel ou une petite demande ?",
+            answer: "Oui. Vous pouvez commencer petit, puis passer à un pack mensuel ou à une offre plus large si vous avez besoin de plus de volume."
+          }
+        ],
+        contact: {
+          eyebrow: "Prêt à passer au niveau supérieur ?",
+          title: "Expliquez votre projet et je vous réponds avec une proposition claire.",
+          description: "Le site a maintenant un vrai niveau studio. Si vous voulez, l'étape suivante est simple : on remplace ensuite les visuels d'exemple par vos vrais travaux et on ajuste les prix exactement comme vous voulez.",
+          primaryCta: "Envoyer un message",
+          secondaryCta: "Voir les offres",
+          meta: [
+            "WhatsApp direct",
+            "Réponse rapide",
+            "Basé au Maroc · disponible à distance"
+          ]
+        },
+        footer: {
+          tagline: "Image plus premium, offre plus claire, vente plus facile",
+          copy: "Tous droits réservés"
+        },
+        waMessage: "Bonjour, je veux améliorer mon image de marque et commander un service."
+      },
+      ar: {
+        pageTitle: "Chady Digital Studio | فيديو وصور وإعلانات",
+        brand: {
+          title: "Chady Digital Studio",
+          subtitle: "فيديو · صور · إعلانات"
+        },
+        nav: {
+          home: "الرئيسية",
+          services: "الخدمات",
+          showcase: "الأسلوب البصري",
+          packages: "العروض",
+          faq: "الأسئلة",
+          contact: "تواصل",
+          cta: "تواصل عبر واتساب"
+        },
+        hero: {
+          badge: "استوديو إبداعي للعلامات التجارية والمتاجر وصناع المحتوى",
+          title: "هوية بصرية <span class='accent'>احترافية</span> تعزز الثقة وتمنح مشروعك حضورا اقوى.",
+          description: "أقدّم فيديوهات، صورًا، وتصورات إعلانية جاهزة للنشر على Instagram وTikTok وYouTube والحملات المحلية. الهدف ليس فقط أن يبدو المحتوى جميلًا، بل أن يجعل نشاطك أكثر جدية ووضوحًا وقابلية للبيع.",
+          primaryCta: "اكتشف الخدمات",
+          secondaryCta: "رسالة واتساب",
+          visualTopLabel: "التموضع",
+          visualTopValue: "<strong>ستايل احترافي</strong> وسهل في الطلب",
+          visualBottomLabel: "أنواع التسليم",
+          visualBottomValue: "ريلز، ستوري، منشورات، إعلانات، صور مصغرة ومحتوى منتجات",
+          notes: [
+            "رد سريع",
+            "تسليم خلال 24 إلى 72 ساعة",
+            "مقاسات جاهزة للموبايل"
+          ],
+          stats: [
+            { value: "24-72h", label: "مدة التسليم المعتادة لمعظم الأعمال القصيرة" },
+            { value: "MAD", label: "أسعار مناسبة وتبقى بمظهر احترافي" },
+            { value: "9:16", label: "مونتاج مناسب للريلز والستوريات والشورتس وتيك توك" }
+          ],
+          audiences: [
+            "صناع محتوى",
+            "مطاعم",
+            "تجميل",
+            "متاجر إلكترونية",
+            "فنانون",
+            "مشاريع صغيرة"
+          ]
+        },
+        benefits: {
+          eyebrow: "لماذا هذا الشكل أقوى",
+          title: "صورة أكثر احترافية تساعدك على البيع بثقة أكبر",
+          description: "المحتوى البصري الجيد يجعل العميل يثق فيك قبل أن يراسلك. هذا الاتجاه الجديد يعطي إحساسًا أقوى بالعلامة التجارية والجودة والوضوح.",
+          items: [
+            {
+              icon: "shield",
+              title: "صورة احترافية",
+              text: "موقع أنظف وأكثر قوة يعطي انطباعًا جادًا من أول ثانية ويجعل نشاطك يبدو أكثر قيمة."
+            },
+            {
+              icon: "bolt",
+              title: "محتوى جاهز للنشر",
+              text: "كل شيء مصمم للمنصات التي تبيع فيها فعلًا: ريلز، ستوري، شورتس، منشورات وإعلانات."
+            },
+            {
+              icon: "message",
+              title: "طلب بسيط وواضح",
+              text: "العميل يفهم بسرعة ماذا تقدّم، كيف يطلب، وما القيمة التي سيحصل عليها بدون تعقيد."
+            }
+          ]
+        },
+        servicesSection: {
+          eyebrow: "الخدمات",
+          title: "الخدمات التي يمكنني تقديمها لنشاطك",
+          description: "أبقيت على أهم خدماتك الحالية، وأضافت هذه النسخة عروضًا أقوى من ناحية البيع لتجعل الموقع أكثر احترافية وقيمة."
+        },
+        services: [
+          {
+            icon: "play",
+            title: "مونتاج فيديو احترافي",
+            copy: "ريلز، تيك توك، يوتيوب شورتس، فيديوهات ترويجية، هوكات قوية، ترجمة ومونتاج نظيف يجذب الانتباه بسرعة.",
+            price: "ابتداءً من 70 درهم",
+            tags: ["ترجمة", "انتقالات نظيفة", "مقاس عمودي"]
+          },
+          {
+            icon: "camera",
+            title: "تصوير + مونتاج",
+            copy: "تصوير بالكاميرا والإضاءة مع مونتاج كامل لفيديوهات المنتجات، تقديم المشاريع، المقابلات أو محتوى السوشيال ميديا.",
+            price: "ابتداءً من 300 درهم",
+            tags: ["كاميرا", "لقطات نظيفة", "تسليم كامل"]
+          },
+          {
+            icon: "image",
+            title: "تعديل الصور والمرئيات",
+            copy: "تعديل صور الأشخاص أو المنتجات، تصحيح الألوان، الصور المصغرة، والمرئيات الخاصة بالسوشيال ميديا بشكل أقوى وأكثر أناقة.",
+            price: "ابتداءً من 50 درهم",
+            tags: ["تعديل", "ألوان", "صور مصغرة"]
+          },
+          {
+            icon: "megaphone",
+            title: "تصميمات إعلانية",
+            copy: "صور وفيديوهات إعلانية لفيسبوك وإنستغرام مع نسخ متعددة مناسبة للستوري والفيد والحملات المحلية.",
+            price: "ابتداءً من 200 درهم",
+            tags: ["Meta Ads", "Stories", "نسخ متعددة"]
+          },
+          {
+            icon: "calendar",
+            title: "باقة محتوى شهرية",
+            copy: "عرض أكثر قوة للمشاريع التي تريد محتوى مستمرًا: ريلز، مرئيات، نسخ مختلفة ودعم سريع عبر واتساب.",
+            price: "ابتداءً من 900 درهم",
+            tags: ["باقة شهرية", "كمية محتوى", "توفير وقت"]
+          },
+          {
+            icon: "music",
+            title: "مونتاج موسيقي وصوتي",
+            copy: "تنظيف، ترتيب، دعم موسيقي أو إعداد صوتي للكليبات، المقدمات، المحتوى الترويجي أو المشاريع الإبداعية.",
+            price: "حسب الطلب",
+            tags: ["صوت", "موسيقى", "دعم إبداعي"]
+          }
+        ],
+        showcaseSection: {
+          eyebrow: "الاتجاه البصري",
+          title: "المستوى البصري الذي يمكن أن تصل إليه علامتك",
+          description: "تم استخدام صور حقيقية لإعطاء الموقع إحساسًا أقوى وأكثر فخامة. ويمكن لاحقًا استبدالها بأعمالك الحقيقية عندما تريد."
+        },
+        showcase: [
+          {
+            tag: "ما بعد الإنتاج",
+            title: "بيئة مونتاج احترافية",
+            copy: "جو بصري أكثر جدية وتقنية يعطي العميل انطباعًا مباشرًا أنك تعمل بجودة وترتيب.",
+            note: "مناسب جدًا لإبراز خدمة مونتاج الفيديو."
+          },
+          {
+            tag: "سوشيال ميديا",
+            title: "محتوى موجه للعلامات والمبدعين",
+            copy: "الموقع يوضح أنك تفهم إنستغرام، لينكدإن، تيك توك ومنطق المحتوى الحديث الموجه للأعمال.",
+            note: "ممتاز لبيع الباقات الشهرية والدعم البصري."
+          },
+          {
+            tag: "تصوير منتج",
+            title: "تصوير وتجهيز مشهد بصري جميل",
+            copy: "الإحساس الدافئ داخل الاستوديو مناسب للمنتجات والمتاجر المحلية والأكل والجمال وإطلاق العلامات.",
+            note: "يدعم خدمات التصوير والإعلانات بشكل ممتاز."
+          },
+          {
+            tag: "تعديل الصور",
+            title: "لمسة نهائية أنيقة وواضحة",
+            copy: "عندما يرى العميل بيئة تعديل احترافية يصبح عرض خدمة الصور أكثر إقناعًا ومصداقية.",
+            note: "مفيد للصور الشخصية والمنتجات والصور المصغرة."
+          }
+        ],
+        packagesSection: {
+          eyebrow: "العروض",
+          title: "باقات أوضح وأسهل في البيع",
+          description: "بدل قائمة أسعار بسيطة فقط، هذه الباقات تعطيك شكلًا تجاريًا أقوى وأسهل للعميل في الفهم والطلب."
+        },
+        packages: [
+          {
+            name: "Starter Reel",
+            price: "70 درهم",
+            copy: "لصانع محتوى أو مشروع صغير يريد أول محتوى نظيف وسريع.",
+            featured: false,
+            points: [
+              "فيديو قصير واحد",
+              "ترجمة بسيطة",
+              "تصدير مناسب للموبايل",
+              "تعديلات خفيفة"
+            ]
+          },
+          {
+            name: "Content Pack",
+            price: "450 درهم",
+            copy: "أفضل عرض للمتاجر والمطاعم والعلامات التي تريد النشر بشكل مستمر.",
+            featured: true,
+            points: [
+              "4 محتويات قصيرة أو مرئية",
+              "مقاسات ريلز + ستوري",
+              "هوية بصرية متناسقة",
+              "دعم واتساب سريع"
+            ]
+          },
+          {
+            name: "Brand Boost",
+            price: "1200 درهم",
+            copy: "عرض أكبر للحملات أو إطلاقات المنتجات أو تقوية الصفحة بشكل واضح.",
+            featured: false,
+            points: [
+              "تصوير أو باقة إبداعية أكبر",
+              "مونتاج + مرئيات إعلانية",
+              "نسخ متعددة للمقاسات",
+              "أولوية في التسليم"
+            ]
+          }
+        ],
+        extras: {
+          eyebrow: "متوفر أيضًا",
+          description: "احتفظت بالخدمات الرقمية السريعة كجزء ثانوي حتى يبقى الموقع احترافيًا بدون أن يبتعد عن نشاطك الحقيقي."
+        },
+        extraItems: [
+          "خدمات رقمية",
+          "شحن ألعاب",
+          "Netflix / Spotify",
+          "PUBG Mobile",
+          "Free Fire",
+          "تسليم سريع"
+        ],
+        processSection: {
+          eyebrow: "طريقة العمل",
+          title: "طلب بسيط وواضح من البداية إلى التسليم",
+          description: "العميل يحب أن يفهم كيف ستتم الخدمة. لهذا أضفت قسمًا يشرح العمل بطريقة احترافية وسهلة."
+        },
+        process: [
+          {
+            title: "Brief عبر واتساب",
+            copy: "ترسل لي ما تحتاجه، نوع المحتوى، والمقاس المطلوب، ثم أرسل لك عرضًا واضحًا وسريعًا."
+          },
+          {
+            title: "تحديد الاتجاه",
+            copy: "نحدد الستايل والنبرة والمراجع البصرية حتى يكون التنفيذ واضحًا من البداية."
+          },
+          {
+            title: "التنفيذ",
+            copy: "أبدأ في المونتاج أو التعديل أو التصوير أو إعداد النسخ الإعلانية حسب العرض الذي اخترته."
+          },
+          {
+            title: "التسليم",
+            copy: "تستلم الملفات جاهزة للنشر مع التعديلات اللازمة للوصول إلى نتيجة نظيفة."
+          }
+        ],
+        reviewsSection: {
+          eyebrow: "آراء العملاء",
+          title: "آراء بسيطة لكنها تعطي ثقة أكبر",
+          description: "احتفظت بفكرة التقييمات، لكن بشكل بصري أقوى وأكثر انسجامًا مع هوية الموقع الجديدة."
+        },
+        reviews: [
+          {
+            name: "Iman Maghraoui",
+            role: "عميل محتوى قصير",
+            quote: "الخدمة كانت سريعة جدًا والمونتاج احترافي. بالتأكيد سأعمل معه مرة أخرى.",
+            avatar: "IM"
+          },
+          {
+            name: "Abdenour Kasqmi",
+            role: "مشروع صغير",
+            quote: "التواصل ممتاز والأسعار مناسبة جدًا. النتيجة النهائية كانت أفضل من المتوقع.",
+            avatar: "AK"
+          },
+          {
+            name: "Byakho",
+            role: "مشروع فيديو",
+            quote: "المونتاج كان نظيفًا وعصريًا وبمستوى احترافي مع قيمة ممتازة مقابل السعر.",
+            avatar: "BY"
+          },
+          {
+            name: "Hamid Kun",
+            role: "مشروع موسيقي",
+            quote: "النتيجة النهائية كانت نقية وعصرية وبانت أكثر احترافية. بصح الخدمة مزيانة والمستوى مليح.",
+            avatar: "HK"
+          },
+          {
+            name: "Amina Sqali",
+            role: "براند مجال الجمال",
+            quote: "عجبني الاهتمام بالتفاصيل والألوان وطريقة التقديم. الصفحة ولات تبان أنيقة وتعطي ثقة.",
+            avatar: "AS"
+          }
+        ],
+        faqSection: {
+          eyebrow: "الأسئلة الشائعة",
+          title: "ما الذي يريد العميل معرفته قبل أن يطلب؟",
+          description: "هذا القسم يعطي الموقع طابعًا تجاريًا أوضح ويقلل من تردد العميل قبل التواصل."
+        },
+        faq: [
+          {
+            question: "كم يستغرق التسليم؟",
+            answer: "معظم الأعمال القصيرة يمكن تسليمها خلال 24 إلى 72 ساعة حسب ضغط العمل وتعقيد المشروع."
+          },
+          {
+            question: "هل تعمل بالعربية والفرنسية؟",
+            answer: "نعم. الموقع نفسه يدعم اللغتين، ويمكن تنفيذ محتوى مناسب للجمهور المحلي بكل سهولة."
+          },
+          {
+            question: "هل التعديلات مشمولة؟",
+            answer: "نعم، توجد تعديلات معقولة للوصول إلى نتيجة نهائية نظيفة، خصوصًا في الباقات الأساسية."
+          },
+          {
+            question: "هل يمكنني طلب ريل واحد أو خدمة صغيرة فقط؟",
+            answer: "نعم. يمكنك البدء بطلب صغير ثم الانتقال إلى باقة أكبر أو شهرية عندما تحتاج حجمًا أكبر."
+          }
+        ],
+        contact: {
+          eyebrow: "جاهز لرفع مستوى مشروعك؟",
+          title: "أرسل فكرتك الآن وسأرجع لك بعرض واضح ومناسب.",
+          description: "الموقع الآن بمستوى أقوى بكثير. والخطوة التالية إذا أردت هي استبدال صور العرض بأعمالك الحقيقية وتعديل الأسعار النهائية كما تريد.",
+          primaryCta: "إرسال رسالة",
+          secondaryCta: "مشاهدة العروض",
+          meta: [
+            "واتساب مباشر",
+            "رد سريع",
+            "من المغرب · متاح عن بعد"
+          ]
+        },
+        footer: {
+          tagline: "صورة أقوى، عرض أوضح، وبيع أسهل",
+          copy: "جميع الحقوق محفوظة"
+        },
+        waMessage: "مرحبًا، أريد تحسين هوية مشروعي وطلب خدمة."
+      }
+    };
+
+    let currentLang = "fr";
+    let revealObserver;
+
+    const nodes = {
+      benefitGrid: document.getElementById("benefitGrid"),
+      serviceGrid: document.getElementById("serviceGrid"),
+      showcaseGrid: document.getElementById("showcaseGrid"),
+      packageGrid: document.getElementById("packageGrid"),
+      addonList: document.getElementById("addonList"),
+      processGrid: document.getElementById("processGrid"),
+      reviewGrid: document.getElementById("reviewGrid"),
+      faqGrid: document.getElementById("faqGrid"),
+      heroStats: document.getElementById("heroStats"),
+      heroNotes: document.getElementById("heroNotes"),
+      audienceStrip: document.getElementById("audienceStrip"),
+      contactMeta: document.getElementById("contactMeta"),
+      year: document.getElementById("year"),
+      nav: document.getElementById("siteNav"),
+      mobileMenu: document.getElementById("mobileMenu"),
+      mobileToggle: document.getElementById("mobileToggle")
+    };
+
+    function pathValue(object, path) {
+      return path.split(".").reduce((acc, key) => acc && acc[key], object);
+    }
+
+    function renderTextContent() {
+      const copy = COPY[currentLang];
+      document.title = copy.pageTitle;
+
+      document.querySelectorAll("[data-copy]").forEach((node) => {
+        const value = pathValue(copy, node.dataset.copy);
+        if (value !== undefined) {
+          node.textContent = value;
+        }
+      });
+
+      document.querySelectorAll("[data-copy-html]").forEach((node) => {
+        const value = pathValue(copy, node.dataset.copyHtml);
+        if (value !== undefined) {
+          node.innerHTML = value;
+        }
+      });
+    }
+
+    function renderBenefits() {
+      const items = COPY[currentLang].benefits.items;
+      nodes.benefitGrid.innerHTML = items.map((item) => `
+        <article class="benefit-card surface-card reveal">
+          <div class="icon">${ICONS[item.icon]}</div>
+          <h3 class="benefit-title">${item.title}</h3>
+          <p class="benefit-text">${item.text}</p>
+        </article>
+      `).join("");
+    }
+
+    function renderServices() {
+      const items = COPY[currentLang].services;
+      nodes.serviceGrid.innerHTML = items.map((item) => `
+        <article class="service-card surface-card reveal">
+          <div class="service-top">
+            <div class="service-icon">${ICONS[item.icon]}</div>
+            <div class="service-price">${item.price}</div>
+          </div>
+          <div>
+            <h3 class="service-title">${item.title}</h3>
+            <p class="service-copy">${item.copy}</p>
+          </div>
+          <ul class="service-tags">
+            ${item.tags.map((tag) => `<li>${tag}</li>`).join("")}
+          </ul>
+        </article>
+      `).join("");
+    }
+
+    function renderShowcase() {
+      const items = COPY[currentLang].showcase;
+      nodes.showcaseGrid.innerHTML = items.map((item, index) => `
+        <article class="showcase-card surface-card reveal">
+          <div class="showcase-image">
+            <img src="${SHOWCASE_MEDIA[index].image}" alt="${item.title}">
+          </div>
+          <div class="showcase-body">
+            <span class="showcase-tag">${item.tag}</span>
+            <h3 class="showcase-title">${item.title}</h3>
+            <p class="showcase-copy">${item.copy}</p>
+            <p class="showcase-note">${item.note}</p>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderPackages() {
+      const items = COPY[currentLang].packages;
+      nodes.packageGrid.innerHTML = items.map((item) => `
+        <article class="package-card surface-card reveal ${item.featured ? "featured" : ""}">
+          ${item.featured ? `<span class="badge-popular">${currentLang === "fr" ? "Le plus demandé" : "الأكثر طلبًا"}</span>` : ""}
+          <div>
+            <h3 class="package-name">${item.name}</h3>
+            <p class="package-copy">${item.copy}</p>
+          </div>
+          <div class="package-price">
+            <small>${currentLang === "fr" ? "à partir de" : "ابتداءً من"}</small>
+            <span>${item.price}</span>
+          </div>
+          <ul class="package-list">
+            ${item.points.map((point) => `<li>${point}</li>`).join("")}
+          </ul>
+          <a class="ghost-button wa-link" href="https://wa.me/212636483530" target="_blank" rel="noreferrer">${currentLang === "fr" ? "Commander ce pack" : "اطلب هذه الباقة"}</a>
+        </article>
+      `).join("");
+    }
+
+    function renderExtras() {
+      nodes.addonList.innerHTML = COPY[currentLang].extraItems
+        .map((item) => `<li>${item}</li>`)
+        .join("");
+    }
+
+    function renderProcess() {
+      const items = COPY[currentLang].process;
+      nodes.processGrid.innerHTML = items.map((item, index) => `
+        <article class="process-card surface-card reveal">
+          <div class="step-number">${index + 1}</div>
+          <h3 class="process-title">${item.title}</h3>
+          <p class="process-copy">${item.copy}</p>
+        </article>
+      `).join("");
+    }
+
+    function renderReviews() {
+      const items = COPY[currentLang].reviews;
+      nodes.reviewGrid.innerHTML = items.map((item) => `
+        <article class="review-card surface-card reveal">
+          <div class="review-stars" aria-hidden="true">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="review-quote">“${item.quote}”</p>
+          <div class="review-footer">
+            <div class="review-avatar">${item.avatar}</div>
+            <div>
+              <div class="review-name">${item.name}</div>
+              <div class="review-role">${item.role}</div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderFaq() {
+      const items = COPY[currentLang].faq;
+      nodes.faqGrid.innerHTML = items.map((item) => `
+        <details class="faq-item surface-card reveal">
+          <summary>
+            <span>${item.question}</span>
+            <span>+</span>
+          </summary>
+          <div class="faq-answer">${item.answer}</div>
+        </details>
+      `).join("");
+    }
+
+    function renderHeroMeta() {
+      const hero = COPY[currentLang].hero;
+
+      nodes.heroNotes.innerHTML = hero.notes
+        .map((item) => `<span class="hero-note">${item}</span>`)
+        .join("");
+
+      nodes.heroStats.innerHTML = hero.stats.map((item) => `
+        <article class="stat-card surface-card reveal">
+          <div class="stat-value">${item.value}</div>
+          <div class="stat-label">${item.label}</div>
+        </article>
+      `).join("");
+
+      nodes.audienceStrip.innerHTML = hero.audiences
+        .map((item) => `<span class="audience-pill">${item}</span>`)
+        .join("");
+    }
+
+    function renderContactMeta() {
+      nodes.contactMeta.innerHTML = COPY[currentLang].contact.meta
+        .map((item) => `<span class="meta-chip">${item}</span>`)
+        .join("");
+    }
+
+    function setWhatsAppLinks() {
+      const message = encodeURIComponent(COPY[currentLang].waMessage);
+      document.querySelectorAll(".wa-link").forEach((link) => {
+        link.href = `https://wa.me/212636483530?text=${message}`;
+      });
+    }
+
+    function setupRevealObserver() {
+      if (revealObserver) {
+        revealObserver.disconnect();
+      }
+
+      revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14 });
+
+      document.querySelectorAll(".reveal").forEach((element) => {
+        revealObserver.observe(element);
+      });
+    }
+
+    function updateLangButtons() {
+      document.querySelectorAll(".lang-btn").forEach((button) => {
+        button.classList.toggle("active", button.dataset.lang === currentLang);
+      });
+    }
+
+    function setLanguage(lang, persist = true) {
+      if (!COPY[lang]) return;
+
+      document.body.classList.add("is-switching");
+
+      window.setTimeout(() => {
+        currentLang = lang;
+        document.documentElement.lang = lang === "ar" ? "ar" : "fr";
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+        document.body.classList.toggle("lang-ar", lang === "ar");
+        document.body.classList.toggle("lang-fr", lang !== "ar");
+
+        renderTextContent();
+        renderHeroMeta();
+        renderBenefits();
+        renderServices();
+        renderShowcase();
+        renderPackages();
+        renderExtras();
+        renderProcess();
+        renderReviews();
+        renderFaq();
+        renderContactMeta();
+        setWhatsAppLinks();
+        updateLangButtons();
+        setupRevealObserver();
+
+        if (persist) {
+          try {
+            localStorage.setItem("chady-digital-lang", lang);
+          } catch (error) {
+            // Ignore localStorage errors.
+          }
+        }
+
+        nodes.mobileMenu.classList.remove("open");
+        nodes.mobileToggle.setAttribute("aria-expanded", "false");
+        document.body.classList.remove("is-switching");
+      }, 150);
+    }
+
+    function handleScroll() {
+      nodes.nav.classList.toggle("scrolled", window.scrollY > 20);
+    }
+
+    function initMenu() {
+      nodes.mobileToggle.addEventListener("click", () => {
+        const isOpen = nodes.mobileMenu.classList.toggle("open");
+        nodes.mobileToggle.setAttribute("aria-expanded", String(isOpen));
+      });
+
+      nodes.mobileMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          nodes.mobileMenu.classList.remove("open");
+          nodes.mobileToggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    }
+
+    function initLangButtons() {
+      document.querySelectorAll(".lang-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          setLanguage(button.dataset.lang);
+        });
+      });
+    }
+
+    function init() {
+      nodes.year.textContent = new Date().getFullYear();
+      initMenu();
+      initLangButtons();
+      handleScroll();
+      window.addEventListener("scroll", handleScroll, { passive: true });
+
+      let savedLang = "fr";
+      try {
+        savedLang = localStorage.getItem("chady-digital-lang") || "fr";
+      } catch (error) {
+        savedLang = "fr";
+      }
+
+      setLanguage(savedLang, false);
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
 </body>
 </html>
